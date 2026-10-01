@@ -5,21 +5,19 @@ import com.hrmis.enums.TrangThaiHopDong;
 import java.time.LocalDate;
 
 public class HopDong {
-    // 1. Khai báo các thuộc tính (khớp chuẩn ERD)
+
     private int maHopDong;
     private int maNhanVien;
     private String soHopDong;
     private LoaiHopDong loaiHopDong;
     private LocalDate ngayHieuLuc;
-    private LocalDate ngayHetHan; // Có thể nhận null nếu là hợp đồng vô thời hạn
+    private LocalDate ngayHetHan;
     private double luongThoaThuan;
     private TrangThaiHopDong trangThai;
 
-    // 2. Constructor mặc định
     public HopDong() {
     }
 
-    // 3. Constructor đầy đủ tham số (khớp với DatabaseMock)
     public HopDong(int maHopDong, int maNhanVien, String soHopDong, LoaiHopDong loaiHopDong,
             LocalDate ngayHieuLuc, LocalDate ngayHetHan, double luongThoaThuan, TrangThaiHopDong trangThai) {
         this.maHopDong = maHopDong;
@@ -32,7 +30,6 @@ public class HopDong {
         this.trangThai = trangThai;
     }
 
-    // 4. Các phương thức Getter và Setter
     public int getMaHopDong() {
         return maHopDong;
     }
@@ -97,7 +94,6 @@ public class HopDong {
         this.trangThai = trangThai;
     }
 
-    // 5. Ghi đè phương thức toString
     @Override
     public String toString() {
         return "HopDong{" +

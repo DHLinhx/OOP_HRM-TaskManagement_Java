@@ -1,7 +1,7 @@
 package com.hrmis.models;
 
 public class DieuKhoanHopDong {
-    // 1. Khai báo các thuộc tính (khớp chuẩn ERD)
+
     private int maDieuKhoan;
     private int maHopDong;
     private int soThuTuDieu;
@@ -9,11 +9,9 @@ public class DieuKhoanHopDong {
     private String noiDungDieuKhoan;
     private String loaiDieuKhoan;
 
-    // 2. Constructor mặc định (không tham số)
     public DieuKhoanHopDong() {
     }
 
-    // 3. Constructor đầy đủ tham số (khớp với DatabaseMock)
     public DieuKhoanHopDong(int maDieuKhoan, int maHopDong, int soThuTuDieu,
             String tieuDeDieuKhoan, String noiDungDieuKhoan, String loaiDieuKhoan) {
         this.maDieuKhoan = maDieuKhoan;
@@ -24,7 +22,6 @@ public class DieuKhoanHopDong {
         this.loaiDieuKhoan = loaiDieuKhoan;
     }
 
-    // 4. Các phương thức Getter và Setter
     public int getMaDieuKhoan() {
         return maDieuKhoan;
     }
@@ -73,7 +70,6 @@ public class DieuKhoanHopDong {
         this.loaiDieuKhoan = loaiDieuKhoan;
     }
 
-    // 5. Ghi đè phương thức toString
     @Override
     public String toString() {
         return "DieuKhoanHopDong{" +

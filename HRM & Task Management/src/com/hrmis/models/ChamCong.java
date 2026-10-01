@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ChamCong {
-    // 1. Khai báo các thuộc tính (khớp chuẩn ERD)
     private int maChamCong;
     private int maNhanVien;
     private int maCa;
@@ -15,11 +14,9 @@ public class ChamCong {
     private double soGioLamThem;
     private TrangThaiCong trangThaiCong;
 
-    // 2. Constructor mặc định
     public ChamCong() {
     }
 
-    // 3. Constructor đầy đủ tham số (khớp với DatabaseMock)
     public ChamCong(int maChamCong, int maNhanVien, int maCa, LocalDate ngayLamViec,
             LocalTime gioVaoThucTe, LocalTime gioRaThucTe, double soGioLamThem, TrangThaiCong trangThaiCong) {
         this.maChamCong = maChamCong;
@@ -32,7 +29,6 @@ public class ChamCong {
         this.trangThaiCong = trangThaiCong;
     }
 
-    // 4. Các phương thức Getter và Setter
     public int getMaChamCong() {
         return maChamCong;
     }
@@ -97,7 +93,6 @@ public class ChamCong {
         this.trangThaiCong = trangThaiCong;
     }
 
-    // 5. Ghi đè phương thức toString
     @Override
     public String toString() {
         return "ChamCong{" +

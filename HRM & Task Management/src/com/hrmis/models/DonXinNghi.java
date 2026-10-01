@@ -5,7 +5,6 @@ import com.hrmis.enums.TrangThaiDuyet;
 import java.time.LocalDate;
 
 public class DonXinNghi {
-    // 1. Khai báo các thuộc tính (khớp chuẩn ERD)
     private int maDonNghi;
     private int maNhanVien;
     private LoaiNghi loaiNghi;
@@ -13,13 +12,11 @@ public class DonXinNghi {
     private LocalDate ngayKetThuc;
     private String lyDo;
     private TrangThaiDuyet trangThaiDuyet;
-    private Integer nguoiDuyet; // Dùng Integer để chấp nhận giá trị null khi chưa duyệt
+    private Integer nguoiDuyet;
 
-    // 2. Constructor mặc định
     public DonXinNghi() {
     }
 
-    // 3. Constructor đầy đủ tham số (khớp với DatabaseMock)
     public DonXinNghi(int maDonNghi, int maNhanVien, LoaiNghi loaiNghi, LocalDate ngayBatDau,
             LocalDate ngayKetThuc, String lyDo, TrangThaiDuyet trangThaiDuyet, Integer nguoiDuyet) {
         this.maDonNghi = maDonNghi;
@@ -32,7 +29,6 @@ public class DonXinNghi {
         this.nguoiDuyet = nguoiDuyet;
     }
 
-    // 4. Các phương thức Getter và Setter
     public int getMaDonNghi() {
         return maDonNghi;
     }
@@ -97,7 +93,6 @@ public class DonXinNghi {
         this.nguoiDuyet = nguoiDuyet;
     }
 
-    // 5. Ghi đè phương thức toString
     @Override
     public String toString() {
         return "DonXinNghi{" +
