@@ -1,3 +1,5 @@
-public class GioiTinh {
-    
+package com.hrmis.enums;
+
+public enum GioiTinh {
+    NAM, NU
 }

@@ -1,3 +1,5 @@
-public class XepLoai {
-    
+package com.hrmis.enums;
+
+public enum XepLoai {
+    XUAT_SAC, TOT, TRUNG_BINH, YEU
 }

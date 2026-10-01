@@ -1,3 +1,5 @@
-public class LoaiKhoanMuc {
-    
+package com.hrmis.enums;
+
+public enum LoaiKhoanMuc {
+    CONG, TRU
 }
