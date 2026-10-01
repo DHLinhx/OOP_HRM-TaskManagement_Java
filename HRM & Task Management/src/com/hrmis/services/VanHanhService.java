@@ -2,7 +2,7 @@ package com.hrmis.services;
 
 import com.hrmis.data.DatabaseMock;
 import com.hrmis.models.*;
-import com.hrmis.enums.*;
+import java.time.LocalDate;
 
 public class VanHanhService {
 
@@ -35,4 +35,30 @@ public class VanHanhService {
 
         System.out.println("Không tìm thấy hợp đồng có mã: " + maHopDong);
     }
+
+    // =========================================================================
+    // CÂU 2: Cảnh báo hợp đồng sắp hết hạn trong vòng 30 ngày
+    // =========================================================================
+    public void canhBaoHopDongSapHetHan(LocalDate mocThoiGian) {
+        System.out.println("=== DANH SÁCH HỢP ĐỒNG SẮP HẾT HẠN TRONG 30 NGÀY ===");
+
+        // Mốc thời gian 30 ngày sau
+        LocalDate moc30NgaySau = mocThoiGian.plusDays(30);
+
+        for (HopDong hd : DatabaseMock.dsHopDong) {
+            // Chỉ xét hợp đồng có ngày hết hạn
+            if (hd.getNgayHetHan() != null) {
+                LocalDate ngayHetHan = hd.getNgayHetHan();
+
+                // Kiểm tra nếu ngày hết hạn nằm từ mocThoiGian đến 30 ngày sau
+                if (!ngayHetHan.isBefore(mocThoiGian) && !ngayHetHan.isAfter(moc30NgaySau)) {
+                    System.out.println("Số HĐ: " + hd.getSoHopDong()
+                            + " | Mã NV: " + hd.getMaNhanVien()
+                            + " | Loại: " + hd.getLoaiHopDong()
+                            + " | Ngày hết hạn: " + ngayHetHan);
+                }
+            }
+        }
+    }
+
 }
