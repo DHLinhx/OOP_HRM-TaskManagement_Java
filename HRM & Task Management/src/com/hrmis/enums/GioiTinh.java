@@ -1,5 +1,5 @@
 package com.hrmis.enums;
 
 public enum GioiTinh {
-    NAM, NU
+    NAM, NU,KHAC
 }
