@@ -87,19 +87,11 @@ public class DatabaseMock {
                 dsNhomNhanVien.add(new NhomNhanVien(2, "Doi Nghien cuu AI", 1, LocalDate.of(2023, 11, 1),
                                 "Nghien cuu mo hinh AI"));
 
-                /*
-                 * dsThanhVienNhom.add(new ThanhVienNhom(1, 1, 2, LocalDate.of(2024, 1, 15),
-                 * "Tech Lead"));
-                 * dsThanhVienNhom.add(new ThanhVienNhom(2, 1, 4, LocalDate.of(2024, 2, 1),
-                 * "Mobile Dev"));
-                 * dsThanhVienNhom.add(new ThanhVienNhom(3, 2, 1, LocalDate.of(2023, 11, 1),
-                 * "Truong nhom"));
-                 * dsThanhVienNhom.add(new ThanhVienNhom(4, 2, 2, LocalDate.of(2023, 11, 10),
-                 * "Chuyen gia AI"));
-                 * dsThanhVienNhom.add(new ThanhVienNhom(5, 1, 7, LocalDate.of(2024, 3, 1),
-                 * "Tester")); // NV7 tham gia
-                 * // nhóm 1
-                 */
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 1, 2, LocalDate.of(2024, 1, 15), "Tech Lead"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, 4, LocalDate.of(2024, 2, 1), "Mobile Dev"));
+                dsThanhVienNhom.add(new ThanhVienNhom(3, 2, 1, LocalDate.of(2023, 11, 1), "Truong nhom"));
+                dsThanhVienNhom.add(new ThanhVienNhom(4, 2, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
+                dsThanhVienNhom.add(new ThanhVienNhom(5, 1, 7, LocalDate.of(2024, 3, 1), "Tester"));
 
                 // ==========================================
                 // 4. HỢP ĐỒNG & ĐIỀU KHOẢN
@@ -155,56 +147,38 @@ public class DatabaseMock {
 
                 // ==========================================
                 // 7. BẢNG LƯƠNG & CHI TIẾT (Đã sửa lỗi dùng Enum)
-                /*
-                 * // ==========================================
-                 * dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000, 4650000, 44350000,
-                 * TrangThaiChiTra.DA_THANH_TOAN,
-                 * LocalDate.of(2024, 4, 5)));
-                 * dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000, 3200000, 30300000,
-                 * TrangThaiChiTra.DA_THANH_TOAN,
-                 * LocalDate.of(2024, 4, 5)));
-                 * dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000, 1700000, 16500000,
-                 * TrangThaiChiTra.CHO_DUYET,
-                 * null));
-                 * 
-                 * dsChiTietBangLuong.add(new ChiTietBangLuong(1, 2, "Luong co ban",
-                 * LoaiKhoanMuc.CONG, 30000000,
-                 * "22 ngay cong"));
-                 * dsChiTietBangLuong.add(
-                 * new ChiTietBangLuong(2, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000,
-                 * "3 gio OT"));
-                 * dsChiTietBangLuong.add(
-                 * new ChiTietBangLuong(3, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000,
-                 * "Thang 3"));
-                 * dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Bao hiem xa hoi (10.5%)",
-                 * LoaiKhoanMuc.TRU, 3150000,
-                 * "Trich nop BH"));
-                 * dsChiTietBangLuong.add(
-                 * new ChiTietBangLuong(5, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000,
-                 * "Di tre 2 lan"));
-                 * 
-                 * // ==========================================
-                 * // 8. ĐÁNH GIÁ HIỆU SUẤT (Bổ sung NV bị YẾU)
-                 * // ==========================================
-                 * dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(1, 1, 1, "Quy 1", 2024, 4.8,
-                 * XepLoai.XUAT_SAC));
-                 * dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(2, 2, 1, "Quy 1", 2024, 4.2,
-                 * XepLoai.TOT));
-                 * dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(3, 4, 2, "Quy 1", 2024, 3.1,
-                 * XepLoai.TRUNG_BINH));
-                 * dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(4, 6, 2, "Quy 1", 2024, 1.5,
-                 * XepLoai.YEU)); // Bổ sung để test
-                 * // CÂU 8
-                 * 
-                 * dsChiTietDanhGia.add(new ChiTietDanhGia(1, 1, "Ky nang quan ly du an", 0.5,
-                 * 5.0,
-                 * "Dung tien do vuot chi tieu"));
-                 * dsChiTietDanhGia.add(
-                 * new ChiTietDanhGia(2, 1, "Chuyen can dung gio", 0.5, 4.6,
-                 * "Guong mau dung gio 100%"));
-                 * dsChiTietDanhGia.add(
-                 * new ChiTietDanhGia(3, 4, "Chuyen can dung gio", 0.5, 2.0,
-                 * "Hay di tre, can cai thien"));
-                 */
+
+                // ==========================================
+                dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000, 4650000, 44350000, TrangThaiChiTra.DA_THANH_TOAN,
+                                LocalDate.of(2024, 4, 5)));
+                dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000, 3200000, 30300000, TrangThaiChiTra.DA_THANH_TOAN,
+                                LocalDate.of(2024, 4, 5)));
+                dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000, 1700000, 16500000, TrangThaiChiTra.CHO_DUYET,
+                                null));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(1, 2, "Luong co ban", LoaiKhoanMuc.CONG, 30000000,
+                                "22 ngay cong"));
+                dsChiTietBangLuong.add(
+                                new ChiTietBangLuong(2, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000, "3 gio OT"));
+                dsChiTietBangLuong.add(
+                                new ChiTietBangLuong(3, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000, "Thang 3"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Bao hiem xa hoi (10.5%)", LoaiKhoanMuc.TRU, 3150000,
+                                "Trich nop BH"));
+                dsChiTietBangLuong.add(
+                                new ChiTietBangLuong(5, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000, "Di tre 2 lan"));
+
+                // ==========================================
+                // 8. ĐÁNH GIÁ HIỆU SUẤT (Bổ sung NV bị YẾU)
+                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(1, 1, 1, "Quy 1", 2024, 4.8, XepLoai.XUAT_SAC));
+                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(2, 2, 1, "Quy 1", 2024, 4.2, XepLoai.TOT));
+                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(3, 4, 2, "Quy 1", 2024, 3.1, XepLoai.TRUNG_BINH));
+                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(4, 6, 2, "Quy 1", 2024, 1.5, XepLoai.YEU)); // Bổ sung để test
+
+                dsChiTietDanhGia.add(new ChiTietDanhGia(1, 1, "Ky nang quan ly du an", 0.5, 5.0,
+                                "Dung tien do vuot chi tieu"));
+                dsChiTietDanhGia.add(
+                                new ChiTietDanhGia(2, 1, "Chuyen can dung gio", 0.5, 4.6, "Guong mau dung gio 100%"));
+                dsChiTietDanhGia.add(
+                                new ChiTietDanhGia(3, 4, "Chuyen can dung gio", 0.5, 2.0, "Hay di tre, can cai thien"));
+
         }
 }
