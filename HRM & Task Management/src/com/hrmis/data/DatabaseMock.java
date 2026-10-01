@@ -9,20 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseMock {
-    public static List dsPhongBan = new ArrayList<>();
-    public static List dsChucVu = new ArrayList<>();
-    public static List dsNhanVien = new ArrayList<>();
-    public static List dsNhomNhanVien = new ArrayList<>();
-    public static List dsThanhVienNhom = new ArrayList<>();
-    public static List dsHopDong = new ArrayList<>();
-    public static List dsDieuKhoanHopDong = new ArrayList<>();
-    public static List dsCaLamViec = new ArrayList<>();
-    public static List dsChamCong = new ArrayList<>();
-    public static List dsDonXinNghi = new ArrayList<>();
-    public static List dsBangLuong = new ArrayList<>();
-    public static List dsChiTietBangLuong = new ArrayList<>();
-    public static List dsDanhGiaHieuSuat = new ArrayList<>();
-    public static List dsChiTietDanhGia = new ArrayList<>();
+    public static List<PhongBan> dsPhongBan = new ArrayList<>();
+    public static List<ChucVu> dsChucVu = new ArrayList<>();
+    public static List<NhanVien> dsNhanVien = new ArrayList<>();
+    public static List<NhomNhanVien> dsNhomNhanVien = new ArrayList<>();
+    public static List<ThanhVienNhom> dsThanhVienNhom = new ArrayList<>();
+    public static List<HopDong> dsHopDong = new ArrayList<>();
+    public static List<DieuKhoanHopDong> dsDieuKhoanHopDong = new ArrayList<>();
+    public static List<CaLamViec> dsCaLamViec = new ArrayList<>();
+    public static List<ChamCong> dsChamCong = new ArrayList<>();
+    public static List<DonXinNghi> dsDonXinNghi = new ArrayList<>();
+    public static List<BangLuong> dsBangLuong = new ArrayList<>();
+    public static List<ChiTietBangLuong> dsChiTietBangLuong = new ArrayList<>();
+    public static List<DanhGiaHieuSuat> dsDanhGiaHieuSuat = new ArrayList<>();
+    public static List<ChiTietDanhGia> dsChiTietDanhGia = new ArrayList<>();
 
     static {
         // ==========================================
@@ -101,7 +101,7 @@ public class DatabaseMock {
         // 5. CA LÀM VIỆC & CHẤM CÔNG (Đã sửa lỗi dùng Enum & Thêm OT)
         // ==========================================
         dsCaLamViec.add(new CaLamViec(1, "Ca hanh chinh", LocalTime.of(8, 0), LocalTime.of(17, 30)));
-        
+
         dsChamCong.add(new ChamCong(1, 1, 1, LocalDate.of(2024, 3, 1), LocalTime.of(7, 55), LocalTime.of(17, 35), 0.0, TrangThaiCong.DUNG_GIO));
         dsChamCong.add(new ChamCong(2, 1, 1, LocalDate.of(2024, 3, 2), LocalTime.of(7, 50), LocalTime.of(19, 30), 2.0, TrangThaiCong.DUNG_GIO)); // Có OT
         dsChamCong.add(new ChamCong(3, 2, 1, LocalDate.of(2024, 3, 1), LocalTime.of(8, 15), LocalTime.of(17, 30), 0.0, TrangThaiCong.DI_TRE));
