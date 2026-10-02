@@ -87,28 +87,34 @@ public class DatabaseMock {
                 dsNhomNhanVien.add(new NhomNhanVien(2, "Doi Nghien cuu AI", 1, LocalDate.of(2023, 11, 1),
                                 "Nghien cuu mo hinh AI"));
 
-                dsThanhVienNhom.add(new ThanhVienNhom(1, 1, LocalDate.of(2024, 1, 15), "Tech Lead"));
-                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, LocalDate.of(2024, 2, 1), "Mobile Dev"));
-                dsThanhVienNhom.add(new ThanhVienNhom(3, 2, LocalDate.of(2023, 11, 1), "Truong nhom"));
-                dsThanhVienNhom.add(new ThanhVienNhom(4, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
-                dsThanhVienNhom.add(new ThanhVienNhom(5, 1, LocalDate.of(2024, 3, 1), "Tester"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 2, LocalDate.of(2024, 1, 15), "Tech Lead"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 4, LocalDate.of(2024, 2, 1), "Mobile Dev"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 7, LocalDate.of(2024, 3, 1), "Tester"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, LocalDate.of(2023, 11, 1), "Truong nhom"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
 
                 // ==========================================
                 // 4. HỢP ĐỒNG & ĐIỀU KHOẢN
                 // ==========================================
                 // Hợp đồng cũ đã hết hạn
-                dsHopDong.add(new HopDong(1, 2, "HD-2019-001", LoaiHopDong.THU_VIEC, LocalDate.of(2019, 5, 20),
-                                LocalDate.of(2019, 7, 20), 8000000, TrangThaiHopDong.DA_HET_HAN));
-                // Các hợp đồng đang hiệu lực
-                dsHopDong.add(new HopDong(2, 1, "HD-2018-005", LoaiHopDong.VO_THOI_HAN, LocalDate.of(2018, 1, 10), null,
-                                45000000, TrangThaiHopDong.DANG_HIEU_LUC));
-                dsHopDong.add(new HopDong(3, 2, "HD-2022-045", LoaiHopDong.XAC_DINH_THOI_HAN, LocalDate.of(2022, 5, 20),
-                                LocalDate.of(2025, 5, 20), 30000000, TrangThaiHopDong.DANG_HIEU_LUC));
-                // Hợp đồng sắp hết hạn (Đáp ứng câu hỏi Cảnh báo)
-                dsHopDong.add(new HopDong(4, 4, "HD-2023-088", LoaiHopDong.XAC_DINH_THOI_HAN, LocalDate.of(2023, 8, 15),
-                                LocalDate.now().plusDays(20), 16000000, TrangThaiHopDong.SAP_HET_HAN));
-                dsHopDong.add(new HopDong(5, 6, "HD-2024-012", LoaiHopDong.THU_VIEC, LocalDate.of(2024, 3, 1),
-                                LocalDate.now().plusDays(10), 5000000, TrangThaiHopDong.SAP_HET_HAN));
+                dsHopDong.add(new HopDong(1, 2, "HD-2023-001", LoaiHopDong.THU_VIEC, 
+                LocalDate.of(2023, 5, 20), LocalDate.of(2023, 7, 20), 8000000, TrangThaiHopDong.DA_HET_HAN));
+
+                // Hợp đồng vô thời hạn (không có ngày hết hạn -> null)
+                dsHopDong.add(new HopDong(2, 1, "HD-2022-005", LoaiHopDong.VO_THOI_HAN, 
+                LocalDate.of(2022, 1, 10), null, 45000000, TrangThaiHopDong.DANG_HIEU_LUC));
+
+                // Hợp đồng xác định thời hạn 2 năm, còn hạn dài đến năm 2027
+                dsHopDong.add(new HopDong(3, 2, "HD-2025-045", LoaiHopDong.XAC_DINH_THOI_HAN, 
+                LocalDate.of(2025, 5, 20), LocalDate.of(2027, 5, 20), 30000000, TrangThaiHopDong.DANG_HIEU_LUC));
+
+                // Hợp đồng chính thức ký năm 2025, sẽ hết hạn sau 20 ngày nữa tính từ hôm nay
+                dsHopDong.add(new HopDong(4, 4, "HD-2025-088", LoaiHopDong.XAC_DINH_THOI_HAN, 
+                LocalDate.of(2025, 3, 1), LocalDate.now().plusDays(20), 16000000, TrangThaiHopDong.SAP_HET_HAN));
+
+                // Hợp đồng thử việc 2 tháng mới ký đầu năm 2026, sẽ hết hạn sau 10 ngày nữa tính từ hôm nay
+                dsHopDong.add(new HopDong(5, 6, "HD-2026-012", LoaiHopDong.THU_VIEC, 
+                LocalDate.of(2026, 1, 5), LocalDate.now().plusDays(10), 5000000, TrangThaiHopDong.SAP_HET_HAN));
 
                 dsDieuKhoanHopDong.add(new DieuKhoanHopDong(1, 3, 1, "Thoi gian lam viec", "T2 - T6, 8h00 - 17h30",
                                 "Quy dinh"));
