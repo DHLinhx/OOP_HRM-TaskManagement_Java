@@ -134,6 +134,9 @@ public class NhanVien {
         this.maQuanLy = maQuanLy;
     }
 
+    public String HoTenNV() {
+        return this.ho + " " + this.ten;
+    }
     @Override
     public String toString() {
         return "NhanVien{" +
