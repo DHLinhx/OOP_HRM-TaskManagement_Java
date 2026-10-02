@@ -87,11 +87,11 @@ public class DatabaseMock {
                 dsNhomNhanVien.add(new NhomNhanVien(2, "Doi Nghien cuu AI", 1, LocalDate.of(2023, 11, 1),
                                 "Nghien cuu mo hinh AI"));
 
-                dsThanhVienNhom.add(new ThanhVienNhom(1, 1, 2, LocalDate.of(2024, 1, 15), "Tech Lead"));
-                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, 4, LocalDate.of(2024, 2, 1), "Mobile Dev"));
-                dsThanhVienNhom.add(new ThanhVienNhom(3, 2, 1, LocalDate.of(2023, 11, 1), "Truong nhom"));
-                dsThanhVienNhom.add(new ThanhVienNhom(4, 2, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
-                dsThanhVienNhom.add(new ThanhVienNhom(5, 1, 7, LocalDate.of(2024, 3, 1), "Tester"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 1, LocalDate.of(2024, 1, 15), "Tech Lead"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, LocalDate.of(2024, 2, 1), "Mobile Dev"));
+                dsThanhVienNhom.add(new ThanhVienNhom(3, 2, LocalDate.of(2023, 11, 1), "Truong nhom"));
+                dsThanhVienNhom.add(new ThanhVienNhom(4, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
+                dsThanhVienNhom.add(new ThanhVienNhom(5, 1, LocalDate.of(2024, 3, 1), "Tester"));
 
                 // ==========================================
                 // 4. HỢP ĐỒNG & ĐIỀU KHOẢN
