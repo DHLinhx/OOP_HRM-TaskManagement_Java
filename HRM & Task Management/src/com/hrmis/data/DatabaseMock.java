@@ -24,7 +24,22 @@ public class DatabaseMock {
         public static List<DanhGiaHieuSuat> dsDanhGiaHieuSuat = new ArrayList<>();
         public static List<ChiTietDanhGia> dsChiTietDanhGia = new ArrayList<>();
 
-        static {
+        public static void initData() {
+                dsPhongBan.clear();
+                dsChucVu.clear();
+                dsNhanVien.clear();
+                dsNhomNhanVien.clear();
+                dsThanhVienNhom.clear();
+                dsHopDong.clear();
+                dsDieuKhoanHopDong.clear();
+                dsCaLamViec.clear();
+                dsChamCong.clear();
+                dsDonXinNghi.clear();
+                dsBangLuong.clear();
+                dsChiTietBangLuong.clear();
+                dsDanhGiaHieuSuat.clear();
+                dsChiTietDanhGia.clear();
+
                 // ==========================================
                 // 1. CHỨC VỤ & PHÒNG BAN
                 // ==========================================
@@ -147,37 +162,37 @@ public class DatabaseMock {
                 // 7. BẢNG LƯƠNG & CHI TIẾT (Đã bổ sung chi tiết khớp 100%)
                 // ==========================================
                 // Bảng lương 1 (NV1): Thu nhập 49M, Khấu trừ 4.65M -> Thực lãnh 44.35M
-                dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000, 4650000, 44350000, TrangThaiChiTra.DA_THANH_TOAN,
+                dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000.0, 4650000.0, 44350000.0, TrangThaiChiTra.DA_THANH_TOAN,
                                 LocalDate.of(2024, 4, 5)));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(1, 1, "Luong co ban", LoaiKhoanMuc.CONG, 45000000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(1, 1, "Luong co ban", LoaiKhoanMuc.CONG, 45000000.0,
                                 "Luong co ban"));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(2, 1, "Phu cap trach nhiem", LoaiKhoanMuc.CONG, 4000000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(2, 1, "Phu cap trach nhiem", LoaiKhoanMuc.CONG, 4000000.0,
                                 "Phu cap GD"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(3, 1, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 4650000, "BHXH, BHYT"));
+                                new ChiTietBangLuong(3, 1, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 4650000.0, "BHXH, BHYT"));
 
                 // Bảng lương 2 (NV2): Thu nhập 33.5M, Khấu trừ 3.2M -> Thực lãnh 30.3M
-                dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000, 3200000, 30300000, TrangThaiChiTra.DA_THANH_TOAN,
+                dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000.0, 3200000.0, 30300000.0, TrangThaiChiTra.DA_THANH_TOAN,
                                 LocalDate.of(2024, 4, 5)));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Luong co ban", LoaiKhoanMuc.CONG, 30000000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Luong co ban", LoaiKhoanMuc.CONG, 30000000.0,
                                 "22 ngay cong"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(5, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000, "3 gio OT"));
+                                new ChiTietBangLuong(5, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000.0, "3 gio OT"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(6, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000, "Thang 3"));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(7, 2, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 3150000,
+                                new ChiTietBangLuong(6, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000.0, "Thang 3"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(7, 2, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 3150000.0,
                                 "Trich nop BH"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(8, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000, "Di tre 2 lan"));
+                                new ChiTietBangLuong(8, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000.0, "Di tre 2 lan"));
 
                 // Bảng lương 3 (NV4): Thu nhập 18.2M, Khấu trừ 1.7M -> Thực lãnh 16.5M
-                dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000, 1700000, 16500000, TrangThaiChiTra.CHO_DUYET,
+                dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000.0, 1700000.0, 16500000.0, TrangThaiChiTra.CHO_DUYET,
                                 null));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(9, 3, "Luong co ban", LoaiKhoanMuc.CONG, 16000000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(9, 3, "Luong co ban", LoaiKhoanMuc.CONG, 16000000.0,
                                 "Luong thoa thuan"));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(10, 3, "Tien OT lam them", LoaiKhoanMuc.CONG, 2200000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(10, 3, "Tien OT lam them", LoaiKhoanMuc.CONG, 2200000.0,
                                 "4 gio OT"));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(11, 3, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 1700000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(11, 3, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 1700000.0,
                                 "Trich nop BH"));
 
                 // ==========================================
@@ -202,5 +217,9 @@ public class DatabaseMock {
 
                 dsChiTietDanhGia.add(new ChiTietDanhGia(7, 4, "Tien do hoc tap", 0.5, 1.5, "Chua tap trung"));
                 dsChiTietDanhGia.add(new ChiTietDanhGia(8, 4, "Ky luat", 0.5, 1.5, "Can co gang hon"));
+        }
+
+        static {
+                initData();
         }
 }
