@@ -2,6 +2,8 @@ package com.hrmis.services;
 
 import com.hrmis.data.DatabaseMock;
 import com.hrmis.models.*;
+
+import java.time.Duration;
 import java.time.LocalDate;
 
 public class VanHanhService {
@@ -58,6 +60,53 @@ public class VanHanhService {
                             + " | Ngày hết hạn: " + ngayHetHan);
                 }
             }
+        }
+    }
+
+    // =========================================================================
+    // CÂU 3: Bảng chấm công cá nhân theo tháng/năm
+    // =========================================================================
+    public void inBangChamCongCaNhan(int maNhanVien, int thang, int nam) {
+        System.out.println("=== BẢNG CHẤM CÔNG NHÂN VIÊN " + maNhanVien + " (THÁNG " + thang + "/" + nam + ") ===");
+        boolean timThay = false;
+
+        for (ChamCong cc : DatabaseMock.dsChamCong) {
+            // Lọc đúng mã nhân viên, tháng và năm
+            if (cc.getMaNhanVien() == maNhanVien
+                    && cc.getNgayLamViec().getMonthValue() == thang
+                    && cc.getNgayLamViec().getYear() == nam) {
+
+                timThay = true;
+
+                // 1. Tìm tên ca làm việc tương ứng từ maCa
+                String tenCa = "Ca " + cc.getMaCa();
+                for (CaLamViec ca : DatabaseMock.dsCaLamViec) {
+                    if (ca.getMaCa() == cc.getMaCa()) {
+                        tenCa = ca.getTenCa();
+                        break;
+                    }
+                }
+
+                // 2. Tính số giờ làm thực tế từ giờ vào và giờ ra
+                double soGioLam = 0.0;
+                if (cc.getGioVaoThucTe() != null && cc.getGioRaThucTe() != null) {
+                    long soPhut = Duration.between(cc.getGioVaoThucTe(), cc.getGioRaThucTe()).toMinutes();
+                    soGioLam = soPhut / 60.0;
+                }
+
+                // 3. In ra từng ngày chấm công theo yêu cầu đề bài
+                System.out.println("- Ngày: " + cc.getNgayLamViec()
+                        + " | Ca: " + tenCa
+                        + " | Vào: " + cc.getGioVaoThucTe()
+                        + " | Ra: " + cc.getGioRaThucTe()
+                        + " | Số giờ làm: " + String.format("%.1f giờ", soGioLam)
+                        + " | Trạng thái: " + cc.getTrangThaiCong());
+            }
+        }
+
+        if (!timThay) {
+            System.out.println("-> Không tìm thấy dữ liệu chấm công của nhân viên " + maNhanVien + " trong tháng "
+                    + thang + "/" + nam);
         }
     }
 
