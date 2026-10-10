@@ -24,9 +24,24 @@ public class DatabaseMock {
         public static List<DanhGiaHieuSuat> dsDanhGiaHieuSuat = new ArrayList<>();
         public static List<ChiTietDanhGia> dsChiTietDanhGia = new ArrayList<>();
 
-        static {
+        public static void initData() {
+                dsPhongBan.clear();
+                dsChucVu.clear();
+                dsNhanVien.clear();
+                dsNhomNhanVien.clear();
+                dsThanhVienNhom.clear();
+                dsHopDong.clear();
+                dsDieuKhoanHopDong.clear();
+                dsCaLamViec.clear();
+                dsChamCong.clear();
+                dsDonXinNghi.clear();
+                dsBangLuong.clear();
+                dsChiTietBangLuong.clear();
+                dsDanhGiaHieuSuat.clear();
+                dsChiTietDanhGia.clear();
+
                 // ==========================================
-                // 1. PHÒNG BAN & CHỨC VỤ
+                // 1. CHỨC VỤ & PHÒNG BAN
                 // ==========================================
                 dsChucVu.add(new ChucVu(1, "Giam doc Ky thuat"));
                 dsChucVu.add(new ChucVu(2, "Truong phong Kinh doanh"));
@@ -34,18 +49,16 @@ public class DatabaseMock {
                 dsChucVu.add(new ChucVu(4, "Lap trinh vien Junior"));
                 dsChucVu.add(new ChucVu(5, "Chuyen vien Nhan su"));
                 dsChucVu.add(new ChucVu(6, "Thuc tap sinh"));
-                dsChucVu.add(new ChucVu(7, "Truong phong Nhan su")); // Bổ sung để gán cho NV5
+                dsChucVu.add(new ChucVu(7, "Truong phong Nhan su"));
                 dsChucVu.add(new ChucVu(8, "Chuyen vien Sales"));
 
-                // Gán đúng mã trưởng phòng tương ứng với danh sách Nhân viên bên dưới
                 dsPhongBan.add(new PhongBan(1, "Phong CNTT", 1, "Tang 4 - Toa A"));
                 dsPhongBan.add(new PhongBan(2, "Phong Kinh doanh", 3, "Tang 3 - Toa A"));
                 dsPhongBan.add(new PhongBan(3, "Phong Nhan su", 5, "Tang 2 - Toa B"));
 
                 // ==========================================
-                // 2. NHÂN VIÊN (Tổng: 10 người để test TOP 5)
+                // 2. NHÂN VIÊN (10 người)
                 // ==========================================
-                // Sếp lớn (Không có người quản lý = null)
                 dsNhanVien.add(new NhanVien(1, "Nguyen Van", "An", "an.nguyen@company.com", "0901234567",
                                 LocalDate.of(1988, 3, 15), GioiTinh.NAM, LocalDate.of(2018, 1, 10),
                                 TrangThaiLamViec.DANG_LAM_VIEC, 1, 1, null));
@@ -56,13 +69,12 @@ public class DatabaseMock {
                                 LocalDate.of(1990, 12, 30), GioiTinh.NU, LocalDate.of(2019, 10, 1),
                                 TrangThaiLamViec.DANG_LAM_VIEC, 3, 7, 1));
 
-                // Nhân viên cấp dưới (Có ma_quan_ly trỏ về các sếp)
                 dsNhanVien.add(new NhanVien(2, "Tran Thi", "Binh", "binh.tran@company.com", "0912345678",
                                 LocalDate.of(1992, 7, 22), GioiTinh.NU, LocalDate.of(2019, 5, 20),
                                 TrangThaiLamViec.DANG_LAM_VIEC, 1, 3, 1));
                 dsNhanVien.add(new NhanVien(4, "Pham Minh", "Duc", "duc.pham@company.com", "0933445566",
                                 LocalDate.of(1996, 9, 12), GioiTinh.NAM, LocalDate.of(2021, 8, 15),
-                                TrangThaiLamViec.DANG_LAM_VIEC, 1, 4, 2));
+                                TrangThaiLamViec.DANG_LAM_VIEC, 1, 4, 1));
                 dsNhanVien.add(new NhanVien(6, "Dang Quoc", "Khoa", "khoa.dang@company.com", "0944556677",
                                 LocalDate.of(2001, 2, 18), GioiTinh.NAM, LocalDate.of(2023, 6, 1),
                                 TrangThaiLamViec.DANG_LAM_VIEC, 1, 6, 2));
@@ -87,58 +99,71 @@ public class DatabaseMock {
                 dsNhomNhanVien.add(new NhomNhanVien(2, "Doi Nghien cuu AI", 1, LocalDate.of(2023, 11, 1),
                                 "Nghien cuu mo hinh AI"));
 
-                dsThanhVienNhom.add(new ThanhVienNhom(1, 1, 2, LocalDate.of(2024, 1, 15), "Tech Lead"));
-                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, 4, LocalDate.of(2024, 2, 1), "Mobile Dev"));
-                dsThanhVienNhom.add(new ThanhVienNhom(3, 2, 1, LocalDate.of(2023, 11, 1), "Truong nhom"));
-                dsThanhVienNhom.add(new ThanhVienNhom(4, 2, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
-                dsThanhVienNhom.add(new ThanhVienNhom(5, 1, 7, LocalDate.of(2024, 3, 1), "Tester"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 2, LocalDate.of(2024, 1, 15), "Tech Lead"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 4, LocalDate.of(2024, 2, 1), "Mobile Dev"));
+                dsThanhVienNhom.add(new ThanhVienNhom(1, 7, LocalDate.of(2024, 3, 1), "Tester"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 1, LocalDate.of(2023, 11, 1), "Truong nhom"));
+                dsThanhVienNhom.add(new ThanhVienNhom(2, 2, LocalDate.of(2023, 11, 10), "Chuyen gia AI"));
 
                 // ==========================================
                 // 4. HỢP ĐỒNG & ĐIỀU KHOẢN
                 // ==========================================
-                // Hợp đồng cũ đã hết hạn
-                dsHopDong.add(new HopDong(1, 2, "HD-2019-001", LoaiHopDong.THU_VIEC, LocalDate.of(2019, 5, 20),
-                                LocalDate.of(2019, 7, 20), 8000000, TrangThaiHopDong.DA_HET_HAN));
-                // Các hợp đồng đang hiệu lực
-                dsHopDong.add(new HopDong(2, 1, "HD-2018-005", LoaiHopDong.VO_THOI_HAN, LocalDate.of(2018, 1, 10), null,
-                                45000000, TrangThaiHopDong.DANG_HIEU_LUC));
-                dsHopDong.add(new HopDong(3, 2, "HD-2022-045", LoaiHopDong.XAC_DINH_THOI_HAN, LocalDate.of(2022, 5, 20),
-                                LocalDate.of(2025, 5, 20), 30000000, TrangThaiHopDong.DANG_HIEU_LUC));
-                // Hợp đồng sắp hết hạn (Đáp ứng câu hỏi Cảnh báo)
-                dsHopDong.add(new HopDong(4, 4, "HD-2023-088", LoaiHopDong.XAC_DINH_THOI_HAN, LocalDate.of(2023, 8, 15),
-                                LocalDate.now().plusDays(20), 16000000, TrangThaiHopDong.SAP_HET_HAN));
-                dsHopDong.add(new HopDong(5, 6, "HD-2024-012", LoaiHopDong.THU_VIEC, LocalDate.of(2024, 3, 1),
-                                LocalDate.now().plusDays(10), 5000000, TrangThaiHopDong.SAP_HET_HAN));
+                dsHopDong.add(new HopDong(1, 2, "HD-2023-001", LoaiHopDong.THU_VIEC,
+                                LocalDate.of(2023, 5, 20), LocalDate.of(2023, 7, 20), 8000000,
+                                TrangThaiHopDong.DA_HET_HAN));
+                dsHopDong.add(new HopDong(2, 1, "HD-2022-005", LoaiHopDong.VO_THOI_HAN,
+                                LocalDate.of(2022, 1, 10), null, 45000000, TrangThaiHopDong.DANG_HIEU_LUC));
+                dsHopDong.add(new HopDong(3, 2, "HD-2025-045", LoaiHopDong.XAC_DINH_THOI_HAN,
+                                LocalDate.of(2025, 5, 20), LocalDate.of(2027, 5, 20), 30000000,
+                                TrangThaiHopDong.DANG_HIEU_LUC));
+                dsHopDong.add(new HopDong(4, 4, "HD-2025-088", LoaiHopDong.XAC_DINH_THOI_HAN,
+                                LocalDate.of(2025, 3, 1), LocalDate.now().plusDays(20), 16000000,
+                                TrangThaiHopDong.SAP_HET_HAN));
+                dsHopDong.add(new HopDong(5, 6, "HD-2026-012", LoaiHopDong.THU_VIEC,
+                                LocalDate.of(2026, 1, 5), LocalDate.now().plusDays(10), 5000000,
+                                TrangThaiHopDong.SAP_HET_HAN));
 
                 dsDieuKhoanHopDong.add(new DieuKhoanHopDong(1, 3, 1, "Thoi gian lam viec", "T2 - T6, 8h00 - 17h30",
                                 "Quy dinh"));
                 dsDieuKhoanHopDong.add(new DieuKhoanHopDong(2, 3, 2, "Bao mat thong tin",
-                                "Khong tiet lo ma nguon ra ngoai", "Bảo mật (NDA)"));
+                                "Khong tiet lo ma nguon ra ngoai", "Bao mat"));
                 dsDieuKhoanHopDong.add(new DieuKhoanHopDong(3, 3, 3, "Ky luat cong ty",
-                                "Tuan thu dung noi quy lao dong", "Kỷ luật"));
+                                "Tuan thu dung noi quy lao dong", "Ky luat"));
 
                 // ==========================================
-                // 5. CA LÀM VIỆC & CHẤM CÔNG (Đã sửa lỗi dùng Enum & Thêm OT)
                 // ==========================================
+                // 5. CA LÀM VIỆC & CHẤM CÔNG
+                // ==========================================
+                // 1. Ca hành chính chuẩn
                 dsCaLamViec.add(new CaLamViec(1, "Ca hanh chinh", LocalTime.of(8, 0), LocalTime.of(17, 30)));
 
+                // 2 & 3. Ca kíp xoay ca (Mô hình luân phiên)
+                dsCaLamViec.add(new CaLamViec(2, "Ca kip sang", LocalTime.of(6, 0), LocalTime.of(14, 0)));
+                dsCaLamViec.add(new CaLamViec(3, "Ca kip chieu", LocalTime.of(14, 0), LocalTime.of(22, 0)));
+
+                // 4. Ca linh hoạt (Flexible Hours)
+                dsCaLamViec.add(new CaLamViec(4, "Ca linh hoat", LocalTime.of(9, 0), LocalTime.of(18, 30)));
+
+                // 5. Ca bán thời gian (Part-time - 4 tiếng)
+                dsCaLamViec.add(new CaLamViec(5, "Ca ban thoi gian", LocalTime.of(8, 0), LocalTime.of(12, 0)));
+
                 dsChamCong.add(new ChamCong(1, 1, 1, LocalDate.of(2024, 3, 1), LocalTime.of(7, 55),
-                                LocalTime.of(17, 35), 0.0, TrangThaiCong.DUNG_GIO));
+                                LocalTime.of(17, 35), 0.0, TrangThaiCong.DUNG_GIO)); // Ca 1: Ca hanh chinh (8h00 - 17h30)
                 dsChamCong.add(new ChamCong(2, 1, 1, LocalDate.of(2024, 3, 2), LocalTime.of(7, 50),
-                                LocalTime.of(19, 30), 2.0, TrangThaiCong.DUNG_GIO)); // Có OT
-                dsChamCong.add(new ChamCong(3, 2, 1, LocalDate.of(2024, 3, 1), LocalTime.of(8, 15),
-                                LocalTime.of(17, 30), 0.0, TrangThaiCong.DI_TRE));
-                dsChamCong.add(new ChamCong(4, 2, 1, LocalDate.of(2024, 3, 2), LocalTime.of(8, 20),
-                                LocalTime.of(20, 30), 3.0, TrangThaiCong.DI_TRE)); // Có OT
-                dsChamCong.add(new ChamCong(5, 4, 1, LocalDate.of(2024, 3, 2), LocalTime.of(7, 58),
-                                LocalTime.of(21, 30), 4.0, TrangThaiCong.DUNG_GIO)); // Có OT
-                dsChamCong.add(new ChamCong(6, 7, 1, LocalDate.of(2024, 3, 2), LocalTime.of(7, 59),
-                                LocalTime.of(19, 00), 1.5, TrangThaiCong.DUNG_GIO)); // Thêm OT cho NV7
-                dsChamCong.add(new ChamCong(7, 8, 1, LocalDate.of(2024, 3, 2), LocalTime.of(8, 00),
-                                LocalTime.of(18, 30), 1.0, TrangThaiCong.DUNG_GIO)); // Thêm OT cho NV8
+                                LocalTime.of(19, 30), 2.0, TrangThaiCong.DUNG_GIO)); // Ca 1: Ca hanh chinh, OT 2.0h
+                dsChamCong.add(new ChamCong(3, 2, 2, LocalDate.of(2024, 3, 1), LocalTime.of(6, 20),
+                                LocalTime.of(14, 0), 0.0, TrangThaiCong.DI_TRE)); // Ca 2: Ca kip sang (6h00 - 14h00), tre 20p
+                dsChamCong.add(new ChamCong(4, 2, 3, LocalDate.of(2024, 3, 2), LocalTime.of(14, 20),
+                                LocalTime.of(23, 30), 1.5, TrangThaiCong.DI_TRE)); // Ca 3: Ca kip chieu (14h00 - 22h00), tre 20p, OT 1.5h
+                dsChamCong.add(new ChamCong(5, 4, 4, LocalDate.of(2024, 3, 2), LocalTime.of(8, 55),
+                                LocalTime.of(21, 30), 3.0, TrangThaiCong.DUNG_GIO)); // Ca 4: Ca linh hoat (9h00 - 18h30), OT 3.0h
+                dsChamCong.add(new ChamCong(6, 7, 5, LocalDate.of(2024, 3, 2), LocalTime.of(7, 55),
+                                LocalTime.of(13, 30), 1.5, TrangThaiCong.DUNG_GIO)); // Ca 5: Ca ban thoi gian (8h00 - 12h00), OT 1.5h
+                dsChamCong.add(new ChamCong(7, 8, 1, LocalDate.of(2024, 3, 2), LocalTime.of(8, 0),
+                                LocalTime.of(18, 30), 1.0, TrangThaiCong.DUNG_GIO)); // Ca 1: Ca hanh chinh, OT 1.0h
 
                 // ==========================================
-                // 6. ĐƠN XIN NGHỈ (Đã sửa lỗi dùng Enum)
+                // 6. ĐƠN XIN NGHỈ
                 // ==========================================
                 dsDonXinNghi.add(new DonXinNghi(1, 2, LoaiNghi.NGHI_PHEP_NAM, LocalDate.of(2024, 3, 10),
                                 LocalDate.of(2024, 3, 11), "Viec gia dinh", TrangThaiDuyet.CHO_DUYET, 1));
@@ -146,39 +171,72 @@ public class DatabaseMock {
                                 LocalDate.of(2024, 3, 5), "Kham benh", TrangThaiDuyet.DA_DUYET, 2));
 
                 // ==========================================
-                // 7. BẢNG LƯƠNG & CHI TIẾT (Đã sửa lỗi dùng Enum)
-
+                // 7. BẢNG LƯƠNG & CHI TIẾT (Đã bổ sung chi tiết khớp 100%)
                 // ==========================================
-                dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000, 4650000, 44350000, TrangThaiChiTra.DA_THANH_TOAN,
+                // Bảng lương 1 (NV1): Thu nhập 49M, Khấu trừ 4.65M -> Thực lãnh 44.35M
+                dsBangLuong.add(new BangLuong(1, 1, 3, 2024, 49000000.0, 4650000.0, 44350000.0,
+                                TrangThaiChiTra.DA_THANH_TOAN,
                                 LocalDate.of(2024, 4, 5)));
-                dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000, 3200000, 30300000, TrangThaiChiTra.DA_THANH_TOAN,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(1, 1, "Luong co ban", LoaiKhoanMuc.CONG, 45000000.0,
+                                "Luong co ban"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(2, 1, "Phu cap trach nhiem", LoaiKhoanMuc.CONG, 4000000.0,
+                                "Phu cap GD"));
+                dsChiTietBangLuong.add(
+                                new ChiTietBangLuong(3, 1, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 4650000.0,
+                                                "BHXH, BHYT"));
+
+                // Bảng lương 2 (NV2): Thu nhập 33.5M, Khấu trừ 3.2M -> Thực lãnh 30.3M
+                dsBangLuong.add(new BangLuong(2, 2, 3, 2024, 33500000.0, 3200000.0, 30300000.0,
+                                TrangThaiChiTra.DA_THANH_TOAN,
                                 LocalDate.of(2024, 4, 5)));
-                dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000, 1700000, 16500000, TrangThaiChiTra.CHO_DUYET,
-                                null));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(1, 2, "Luong co ban", LoaiKhoanMuc.CONG, 30000000,
+                dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Luong co ban", LoaiKhoanMuc.CONG, 30000000.0,
                                 "22 ngay cong"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(2, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000, "3 gio OT"));
+                                new ChiTietBangLuong(5, 2, "Tien OT lam them", LoaiKhoanMuc.CONG, 2000000.0,
+                                                "3 gio OT"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(3, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000, "Thang 3"));
-                dsChiTietBangLuong.add(new ChiTietBangLuong(4, 2, "Bao hiem xa hoi (10.5%)", LoaiKhoanMuc.TRU, 3150000,
+                                new ChiTietBangLuong(6, 2, "Phu cap an trua", LoaiKhoanMuc.CONG, 1500000.0, "Thang 3"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(7, 2, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 3150000.0,
                                 "Trich nop BH"));
                 dsChiTietBangLuong.add(
-                                new ChiTietBangLuong(5, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000, "Di tre 2 lan"));
+                                new ChiTietBangLuong(8, 2, "Phat di tre", LoaiKhoanMuc.TRU, 50000.0, "Di tre 2 lan"));
+
+                // Bảng lương 3 (NV4): Thu nhập 18.2M, Khấu trừ 1.7M -> Thực lãnh 16.5M
+                dsBangLuong.add(new BangLuong(3, 4, 3, 2024, 18200000.0, 1700000.0, 16500000.0,
+                                TrangThaiChiTra.CHO_DUYET,
+                                null));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(9, 3, "Luong co ban", LoaiKhoanMuc.CONG, 16000000.0,
+                                "Luong thoa thuan"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(10, 3, "Tien OT lam them", LoaiKhoanMuc.CONG, 2200000.0,
+                                "4 gio OT"));
+                dsChiTietBangLuong.add(new ChiTietBangLuong(11, 3, "Bao hiem xa hoi", LoaiKhoanMuc.TRU, 1700000.0,
+                                "Trich nop BH"));
 
                 // ==========================================
-                // 8. ĐÁNH GIÁ HIỆU SUẤT (Bổ sung NV bị YẾU)
+                // 8. ĐÁNH GIÁ HIỆU SUẤT (Bổ sung đủ chi tiết cho cả 4 đánh giá)
+                // ==========================================
                 dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(1, 1, 1, "Quy 1", 2024, 4.8, XepLoai.XUAT_SAC));
                 dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(2, 2, 1, "Quy 1", 2024, 4.2, XepLoai.TOT));
                 dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(3, 4, 2, "Quy 1", 2024, 3.1, XepLoai.TRUNG_BINH));
-                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(4, 6, 2, "Quy 1", 2024, 1.5, XepLoai.YEU)); // Bổ sung để test
+                dsDanhGiaHieuSuat.add(new DanhGiaHieuSuat(4, 6, 2, "Quy 1", 2024, 1.5, XepLoai.YEU));
 
                 dsChiTietDanhGia.add(new ChiTietDanhGia(1, 1, "Ky nang quan ly du an", 0.5, 5.0,
                                 "Dung tien do vuot chi tieu"));
                 dsChiTietDanhGia.add(
                                 new ChiTietDanhGia(2, 1, "Chuyen can dung gio", 0.5, 4.6, "Guong mau dung gio 100%"));
-                dsChiTietDanhGia.add(
-                                new ChiTietDanhGia(3, 4, "Chuyen can dung gio", 0.5, 2.0, "Hay di tre, can cai thien"));
 
+                dsChiTietDanhGia.add(new ChiTietDanhGia(3, 2, "Tien do cong viec", 0.6, 4.5, "Hoan thanh tot task"));
+                dsChiTietDanhGia.add(new ChiTietDanhGia(4, 2, "Chuyen can dung gio", 0.4, 3.75, "Co vai lan di tre"));
+
+                dsChiTietDanhGia.add(
+                                new ChiTietDanhGia(5, 3, "Chuyen can dung gio", 0.5, 2.0, "Hay di tre, can cai thien"));
+                dsChiTietDanhGia.add(new ChiTietDanhGia(6, 3, "Chat luong code", 0.5, 4.2, "Code tot"));
+
+                dsChiTietDanhGia.add(new ChiTietDanhGia(7, 4, "Tien do hoc tap", 0.5, 1.5, "Chua tap trung"));
+                dsChiTietDanhGia.add(new ChiTietDanhGia(8, 4, "Ky luat", 0.5, 1.5, "Can co gang hon"));
+        }
+
+        static {
+                initData();
         }
 }

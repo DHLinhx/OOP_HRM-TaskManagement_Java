@@ -6,5 +6,14 @@
     ],
     "files.encoding": "utf8",
     "java.jdt.ls.vmargs": "-Dfile.encoding=UTF-8",
-    "java.debug.settings.vmArgs": "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8"
+    "java.debug.settings.vmArgs": "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8",
+    "terminal.integrated.env.windows": {
+        "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8"
+    },
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "args": ["-NoExit", "-Command", "chcp 65001 > $null; [Console]::OutputEncoding = [System.Text.Encoding]::UTF8"]
+        }
+    }
 }

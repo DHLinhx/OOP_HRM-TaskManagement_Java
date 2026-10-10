@@ -16,6 +16,8 @@ public class Main {
         vanHanhService.inHopDongChiTiet(3);
         System.out.println("\n>>> ĐANG CHẠY THỬ CÂU 2:");
         vanHanhService.canhBaoHopDongSapHetHan(LocalDate.now());
+        System.out.println("\n>>> ĐANG CHẠY THỬ CÂU 3:");
+        vanHanhService.inBangChamCongCaNhan(2, 3, 2024);
 
         // LINH
 
