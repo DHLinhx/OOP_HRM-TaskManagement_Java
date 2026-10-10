@@ -2,6 +2,7 @@ package com.hrmis;
 
 import java.time.LocalDate;
 
+import com.hrmis.services.NhanSuService;
 import com.hrmis.services.TaiChinhService;
 import com.hrmis.services.VanHanhService;
 
@@ -20,9 +21,20 @@ public class Main {
         vanHanhService.inBangChamCongCaNhan(2, 3, 2024);
 
         // LINH
+        NhanSuService nhanSuService = new NhanSuService();
+        nhanSuService.DanhSachNhanVien();
+        nhanSuService.danhSachPhongBan();
+        nhanSuService.traCuuNhanVienTheoPhongBan("Phong CNTT");
+        nhanSuService.top3NhanVienThamNien();
+        nhanSuService.danhSachCapDuoiCuaQuanLy(1);
+        nhanSuService.chiTietNhomNhanVien(1);
+        nhanSuService.thongKeNhanVienDaNhiemNhieuNhom();
+        nhanSuService.thongKeNhanSuTheoChucVu();
+        nhanSuService.danhSachNhanVienChuaVaoNhom();
+        nhanSuService.timNhanSuTheoTuKhoa("linh");
 
         // HAO
-         TaiChinhService taiChinhService = new TaiChinhService();
+        TaiChinhService taiChinhService = new TaiChinhService();
         taiChinhService.inPhieuLuong(2, 3, 2024);            // Câu 1
         taiChinhService.bangTongHopLuongThang(3, 2024);      // Câu 2
         taiChinhService.quyLuongTheoPhongBan(3, 2024);       // Câu 3
