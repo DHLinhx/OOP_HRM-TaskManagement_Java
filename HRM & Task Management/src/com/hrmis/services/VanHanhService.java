@@ -1,10 +1,16 @@
 package com.hrmis.services;
 
 import com.hrmis.data.DatabaseMock;
+import com.hrmis.enums.TrangThaiCong;
+import com.hrmis.enums.TrangThaiDuyet;
 import com.hrmis.models.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class VanHanhService {
 
@@ -110,4 +116,174 @@ public class VanHanhService {
         }
     }
 
+    // =========================================================================
+    // CÂU 4: Báo cáo đi trễ trong tháng (sắp xếp giảm dần theo số lần vi phạm)
+    static class ThongKeDiTre {
+        int maNV;
+        String hoTen;
+        int soLan;
+
+        public ThongKeDiTre(int maNV, String hoTen, int soLan) {
+            this.maNV = maNV;
+            this.hoTen = hoTen;
+            this.soLan = soLan;
+        }
+    }
+
+    public void baocaoDiTre(int thang, int nam) {
+        System.out.println("=== BÁO CÁO NHÂN VIÊN ĐI TRỄ (THÁNG " + thang + "/" + nam + ") ===");
+        List<ThongKeDiTre> danhSach = new ArrayList<>();
+        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+            int soLanTre = 0;
+
+            for (ChamCong cc : DatabaseMock.dsChamCong) {
+                if (cc.getMaNhanVien() == nv.getMaNhanVien()
+                        && cc.getNgayLamViec().getMonthValue() == thang
+                        && cc.getNgayLamViec().getYear() == nam
+                        && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE) {
+                    soLanTre++;
+                }
+            }
+
+            if (soLanTre > 0) {
+                String hoTen = nv.getHo() + " " + nv.getTen();
+                danhSach.add(new ThongKeDiTre(nv.getMaNhanVien(), hoTen, soLanTre));
+            }
+        }
+
+        if (danhSach.isEmpty()) {
+            System.out.println("-> Tuyệt vời! Không có nhân viên nào đi trễ trong tháng " + thang + "/" + nam);
+            return;
+        }
+        danhSach.sort((a, b) -> Integer.compare(b.soLan, a.soLan));
+        for (ThongKeDiTre tk : danhSach) {
+            System.out.println("Mã NV: " + tk.maNV
+                    + " | Họ tên: " + tk.hoTen
+                    + " | Số lần đi trễ: " + tk.soLan);
+        }
+    }
+
+    static class ThongKeOT {
+        int maNV;
+        String hoTen;
+        double soGio;
+
+        public ThongKeOT(int maNV, String hoTen, double soGio) {
+            this.maNV = maNV;
+            this.hoTen = hoTen;
+            this.soGio = soGio;
+        }
+    }
+
+    public void baocaoOT(int thang, int nam) {
+        System.out.println("=== BÁO CÁO NHÂN VIÊN LÀM THÊM GIỜ (THÁNG " + thang + "/" + nam + ") ===");
+        List<ThongKeOT> danhSach = new ArrayList<>();
+        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+            double soGio = 0;
+            for (ChamCong cc : DatabaseMock.dsChamCong) {
+                if (cc.getMaNhanVien() == nv.getMaNhanVien()
+                        && cc.getNgayLamViec().getMonthValue() == thang
+                        && cc.getNgayLamViec().getYear() == nam) {
+                    soGio += cc.getSoGioLamThem();
+                }
+            }
+            if (soGio > 0) {
+                String hoTen = nv.getHo() + " " + nv.getTen();
+                danhSach.add(new ThongKeOT(nv.getMaNhanVien(), hoTen, soGio));
+            }
+        }
+
+        if (danhSach.isEmpty()) {
+            System.out.println("-> Không có nhân viên nào làm thêm giờ trong tháng " + thang + "/" + nam);
+            return;
+        }
+        danhSach.sort((a, b) -> Double.compare(b.soGio, a.soGio));
+        for (ThongKeOT tk : danhSach) {
+            System.out.println("Mã NV: " + tk.maNV
+                    + " | Họ tên: " + tk.hoTen
+                    + " | Số giờ OT: " + tk.soGio);
+        }
+    }
+
+    // =========================================================================
+    // CÂU 6: Bảng theo dõi đơn nghỉ phép đang CHỜ DUYỆT
+    // =========================================================================
+    public void theoDoiDonNghiPhep() {
+        System.out.println("=== DANH SÁCH ĐƠN NGHỈ PHÉP ĐANG CHỜ DUYỆT ===");
+        boolean timThay = false;
+
+        for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
+            if (don.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET) {
+                timThay = true;
+
+                String tenNguoiNop = "Mã NV: " + don.getMaNhanVien();
+                for (NhanVien nv : DatabaseMock.dsNhanVien) {
+                    if (nv.getMaNhanVien() == don.getMaNhanVien()) {
+                        tenNguoiNop = nv.getHo() + " " + nv.getTen();
+                        break;
+                    }
+                }
+
+                String tenNguoiDuyet = "Chưa chỉ định";
+                if (don.getNguoiDuyet() != null) {
+                    for (NhanVien nv : DatabaseMock.dsNhanVien) {
+                        if (nv.getMaNhanVien() == don.getNguoiDuyet()) {
+                            tenNguoiDuyet = nv.getHo() + " " + nv.getTen();
+                            break;
+                        }
+                    }
+                }
+
+                long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
+
+                System.out.println("- Mã đơn: " + don.getMaDonNghi()
+                        + " | Người nộp: " + tenNguoiNop
+                        + " | Loại nghỉ: " + don.getLoaiNghi()
+                        + " | Số ngày: " + soNgayNghi + " ngày (" + don.getNgayBatDau() + " -> " + don.getNgayKetThuc()
+                        + ")"
+                        + " | Người duyệt: " + tenNguoiDuyet);
+            }
+        }
+
+        if (!timThay) {
+            System.out.println("-> Hiện không có đơn xin nghỉ phép nào đang chờ duyệt.");
+        }
+    }
+
+    // CÂU 7: Lịch sử nghỉ phép của một nhân viên
+    // =========================================================================
+    public void lsNghi(int maNV) {
+        String hoTen = "Không xác định";
+        boolean timThayNV = false;
+        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+            if (nv.getMaNhanVien() == maNV) {
+                hoTen = nv.HoTenNV();
+                timThayNV = true;
+                break;
+            }
+        }
+        if (!timThayNV) {
+            System.out.println("Không tìm thấy nhân viên có mã: " + maNV);
+            return;
+        }
+        System.out.println("=== LỊCH SỬ NGHỈ PHÉP: " + hoTen + " (Mã NV: " + maNV + ") ===");
+        boolean coDon = false;
+
+        for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
+            if (don.getMaNhanVien() == maNV) {
+                coDon = true;
+                long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
+                System.out.println("- Mã đơn: " + don.getMaDonNghi()
+                        + " | Nhân Viên: " + hoTen
+                        + " | Loại nghỉ: " + don.getLoaiNghi()
+                        + " | Ngày nghỉ: " + don.getNgayBatDau() + " -> " + don.getNgayKetThuc()
+                        + " | Số ngày: " + soNgayNghi + " ngày"
+                        + " | Lý do: " + don.getLyDo()
+                        + " | Trạng thái: " + don.getTrangThaiDuyet());
+            }
+        }
+        if (!coDon) {
+            System.out.println("-> Nhân viên " + hoTen + " chưa có đơn xin nghỉ phép nào.");
+        }
+    }
 }
