@@ -1,16 +1,16 @@
 package com.hrmis.services;
 
 import com.hrmis.data.DatabaseMock;
+import com.hrmis.enums.LoaiHopDong;
 import com.hrmis.enums.TrangThaiCong;
 import com.hrmis.enums.TrangThaiDuyet;
+import com.hrmis.enums.TrangThaiHopDong;
 import com.hrmis.models.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VanHanhService {
 
@@ -18,24 +18,41 @@ public class VanHanhService {
     // CÂU 1: Bản in hợp đồng chi tiết
     // =========================================================================
     public void inHopDongChiTiet(int maHopDong) {
-        // 1. Duyệt trực tiếp qua từng HopDong (không cần ép kiểu)
         for (HopDong hd : DatabaseMock.dsHopDong) {
             if (hd.getMaHopDong() == maHopDong) {
-                System.out.println("--- THÔNG TIN HỢP ĐỒNG ---");
-                System.out.println("Số hợp đồng: " + hd.getSoHopDong());
-                System.out.println("Mã nhân viên: " + hd.getMaNhanVien());
-                System.out.println("Loại hợp đồng: " + hd.getLoaiHopDong());
-                System.out.printf("Lương thỏa thuận: %,.0f VNĐ\n", hd.getLuongThoaThuan());
-                System.out.println("Trạng thái: " + hd.getTrangThai());
+                // Lấy thông tin nhân viên ký kết
+                String tenNV = "Mã " + hd.getMaNhanVien();
+                for (NhanVien nv : DatabaseMock.dsNhanVien) {
+                    if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
+                        tenNV = nv.HoTenNV() + " (Mã " + nv.getMaNhanVien() + ")";
+                        break;
+                    }
+                }
 
-                // 2. Duyệt trực tiếp qua từng DieuKhoanHopDong
-                System.out.println("--- CÁC ĐIỀU KHOẢN KÈM THEO ---");
+                System.out.println("==============================================================================");
+                System.out.println("CHI TIẾT HỢP ĐỒNG LAO ĐỘNG: " + hd.getSoHopDong());
+                System.out.println("==============================================================================");
+                System.out.printf("Nhân viên ký kết : %s%n", tenNV);
+                System.out.printf("Loại hợp đồng    : %s%n", hd.getLoaiHopDong());
+                System.out.printf("Thời hạn         : %s -> %s%n",
+                        hd.getNgayHieuLuc(),
+                        hd.getNgayHetHan() != null ? hd.getNgayHetHan() : "Vô thời hạn");
+                System.out.printf("Lương thỏa thuận : %,.0f VNĐ%n", hd.getLuongThoaThuan());
+                System.out.printf("Trạng thái       : %s%n", hd.getTrangThai());
+                System.out.println("------------------------------------------------------------------------------");
+                System.out.println("CÁC ĐIỀU KHOẢN ĐIỀU KIỆN KÈM THEO:");
+
+                boolean coDieuKhoan = false;
                 for (DieuKhoanHopDong dk : DatabaseMock.dsDieuKhoanHopDong) {
                     if (dk.getMaHopDong() == maHopDong) {
-                        System.out.println("Điều " + dk.getSoThuTuDieu() + ": " + dk.getTieuDeDieuKhoan() + " ("
-                                + dk.getLoaiDieuKhoan() + ")");
-                        System.out.println("  -> " + dk.getNoiDungDieuKhoan());
+                        coDieuKhoan = true;
+                        System.out.printf("  [Điều %d] %-25s (%s)%n", dk.getSoThuTuDieu(), dk.getTieuDeDieuKhoan(),
+                                dk.getLoaiDieuKhoan());
+                        System.out.printf("          -> %s%n", dk.getNoiDungDieuKhoan());
                     }
+                }
+                if (!coDieuKhoan) {
+                    System.out.println("  (Hợp đồng không có điều khoản phụ kèm theo)");
                 }
                 return;
             }
@@ -48,24 +65,36 @@ public class VanHanhService {
     // CÂU 2: Cảnh báo hợp đồng sắp hết hạn trong vòng 30 ngày
     // =========================================================================
     public void canhBaoHopDongSapHetHan(LocalDate mocThoiGian) {
-        System.out.println("=== DANH SÁCH HỢP ĐỒNG SẮP HẾT HẠN TRONG 30 NGÀY ===");
+        System.out.println("==============================================================================");
+        System.out.println("CẢNH BÁO HỢP ĐỒNG SẮP HẾT HẠN (30 NGÀY TỪ " + mocThoiGian + ")");
+        System.out.println("==============================================================================");
+        System.out.printf("%-14s %-8s %-22s %-18s %s%n", "Số HĐ", "Mã NV", "Họ và tên", "Loại hợp đồng",
+                "Ngày hết hạn");
+        System.out.println("------------------------------------------------------------------------------");
 
-        // Mốc thời gian 30 ngày sau
         LocalDate moc30NgaySau = mocThoiGian.plusDays(30);
+        boolean timThay = false;
 
         for (HopDong hd : DatabaseMock.dsHopDong) {
-            // Chỉ xét hợp đồng có ngày hết hạn
             if (hd.getNgayHetHan() != null) {
                 LocalDate ngayHetHan = hd.getNgayHetHan();
-
-                // Kiểm tra nếu ngày hết hạn nằm từ mocThoiGian đến 30 ngày sau
                 if (!ngayHetHan.isBefore(mocThoiGian) && !ngayHetHan.isAfter(moc30NgaySau)) {
-                    System.out.println("Số HĐ: " + hd.getSoHopDong()
-                            + " | Mã NV: " + hd.getMaNhanVien()
-                            + " | Loại: " + hd.getLoaiHopDong()
-                            + " | Ngày hết hạn: " + ngayHetHan);
+                    timThay = true;
+                    String hoTen = "";
+                    for (NhanVien nv : DatabaseMock.dsNhanVien) {
+                        if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
+                            hoTen = nv.HoTenNV();
+                            break;
+                        }
+                    }
+                    System.out.printf("%-14s %-8d %-22s %-18s %s%n",
+                            hd.getSoHopDong(), hd.getMaNhanVien(), hoTen, hd.getLoaiHopDong(), ngayHetHan);
                 }
             }
+        }
+
+        if (!timThay) {
+            System.out.println("-> Không có hợp đồng nào sắp hết hạn trong 30 ngày tới.");
         }
     }
 
@@ -73,18 +102,28 @@ public class VanHanhService {
     // CÂU 3: Bảng chấm công cá nhân theo tháng/năm
     // =========================================================================
     public void inBangChamCongCaNhan(int maNhanVien, int thang, int nam) {
-        System.out.println("=== BẢNG CHẤM CÔNG NHÂN VIÊN " + maNhanVien + " (THÁNG " + thang + "/" + nam + ") ===");
-        boolean timThay = false;
+        String hoTen = "Mã " + maNhanVien;
+        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+            if (nv.getMaNhanVien() == maNhanVien) {
+                hoTen = nv.HoTenNV();
+                break;
+            }
+        }
 
+        System.out.println("==============================================================================");
+        System.out.printf("BẢNG CHẤM CÔNG NHÂN VIÊN: %s (Mã %d) - THÁNG %02d/%d%n", hoTen, maNhanVien, thang, nam);
+        System.out.println("==============================================================================");
+        System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n", "Ngày", "Ca làm việc", "Giờ vào", "Giờ ra",
+                "Số giờ làm", "Trạng thái");
+        System.out.println("------------------------------------------------------------------------------");
+
+        boolean timThay = false;
         for (ChamCong cc : DatabaseMock.dsChamCong) {
-            // Lọc đúng mã nhân viên, tháng và năm
             if (cc.getMaNhanVien() == maNhanVien
                     && cc.getNgayLamViec().getMonthValue() == thang
                     && cc.getNgayLamViec().getYear() == nam) {
 
                 timThay = true;
-
-                // 1. Tìm tên ca làm việc tương ứng từ maCa
                 String tenCa = "Ca " + cc.getMaCa();
                 for (CaLamViec ca : DatabaseMock.dsCaLamViec) {
                     if (ca.getMaCa() == cc.getMaCa()) {
@@ -93,31 +132,30 @@ public class VanHanhService {
                     }
                 }
 
-                // 2. Tính số giờ làm thực tế từ giờ vào và giờ ra
                 double soGioLam = 0.0;
                 if (cc.getGioVaoThucTe() != null && cc.getGioRaThucTe() != null) {
                     long soPhut = Duration.between(cc.getGioVaoThucTe(), cc.getGioRaThucTe()).toMinutes();
                     soGioLam = soPhut / 60.0;
                 }
 
-                // 3. In ra từng ngày chấm công theo yêu cầu đề bài
-                System.out.println("- Ngày: " + cc.getNgayLamViec()
-                        + " | Ca: " + tenCa
-                        + " | Vào: " + cc.getGioVaoThucTe()
-                        + " | Ra: " + cc.getGioRaThucTe()
-                        + " | Số giờ làm: " + String.format("%.1f giờ", soGioLam)
-                        + " | Trạng thái: " + cc.getTrangThaiCong());
+                System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n",
+                        cc.getNgayLamViec(),
+                        tenCa,
+                        cc.getGioVaoThucTe(),
+                        cc.getGioRaThucTe(),
+                        String.format("%.1f giờ", soGioLam),
+                        cc.getTrangThaiCong());
             }
         }
 
         if (!timThay) {
-            System.out.println("-> Không tìm thấy dữ liệu chấm công của nhân viên " + maNhanVien + " trong tháng "
-                    + thang + "/" + nam);
+            System.out.println("-> Không tìm thấy dữ liệu chấm công trong tháng này.");
         }
     }
 
     // =========================================================================
     // CÂU 4: Báo cáo đi trễ trong tháng (sắp xếp giảm dần theo số lần vi phạm)
+    // =========================================================================
     static class ThongKeDiTre {
         int maNV;
         String hoTen;
@@ -131,11 +169,15 @@ public class VanHanhService {
     }
 
     public void baocaoDiTre(int thang, int nam) {
-        System.out.println("=== BÁO CÁO NHÂN VIÊN ĐI TRỄ (THÁNG " + thang + "/" + nam + ") ===");
+        System.out.println("==============================================================================");
+        System.out.printf("BÁO CÁO NHÂN VIÊN ĐI TRỄ - THÁNG %02d/%d%n", thang, nam);
+        System.out.println("==============================================================================");
+        System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Số lần đi trễ");
+        System.out.println("------------------------------------------------------------------------------");
+
         List<ThongKeDiTre> danhSach = new ArrayList<>();
         for (NhanVien nv : DatabaseMock.dsNhanVien) {
             int soLanTre = 0;
-
             for (ChamCong cc : DatabaseMock.dsChamCong) {
                 if (cc.getMaNhanVien() == nv.getMaNhanVien()
                         && cc.getNgayLamViec().getMonthValue() == thang
@@ -144,25 +186,26 @@ public class VanHanhService {
                     soLanTre++;
                 }
             }
-
             if (soLanTre > 0) {
-                String hoTen = nv.getHo() + " " + nv.getTen();
-                danhSach.add(new ThongKeDiTre(nv.getMaNhanVien(), hoTen, soLanTre));
+                danhSach.add(new ThongKeDiTre(nv.getMaNhanVien(), nv.HoTenNV(), soLanTre));
             }
         }
 
         if (danhSach.isEmpty()) {
-            System.out.println("-> Tuyệt vời! Không có nhân viên nào đi trễ trong tháng " + thang + "/" + nam);
+            System.out.println("-> Tuyệt vời! Không có nhân viên nào đi trễ trong tháng này.");
             return;
         }
+
         danhSach.sort((a, b) -> Integer.compare(b.soLan, a.soLan));
+        int rank = 1;
         for (ThongKeDiTre tk : danhSach) {
-            System.out.println("Mã NV: " + tk.maNV
-                    + " | Họ tên: " + tk.hoTen
-                    + " | Số lần đi trễ: " + tk.soLan);
+            System.out.printf("%-6d %-8d %-25s %d lần%n", rank++, tk.maNV, tk.hoTen, tk.soLan);
         }
     }
 
+    // =========================================================================
+    // CÂU 5: Báo cáo nhân viên làm thêm giờ (OT) trong tháng
+    // =========================================================================
     static class ThongKeOT {
         int maNV;
         String hoTen;
@@ -176,7 +219,12 @@ public class VanHanhService {
     }
 
     public void baocaoOT(int thang, int nam) {
-        System.out.println("=== BÁO CÁO NHÂN VIÊN LÀM THÊM GIỜ (THÁNG " + thang + "/" + nam + ") ===");
+        System.out.println("==============================================================================");
+        System.out.printf("BÁO CÁO TOP NHÂN VIÊN LÀM THÊM GIỜ (OT) - THÁNG %02d/%d%n", thang, nam);
+        System.out.println("==============================================================================");
+        System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Tổng số giờ OT");
+        System.out.println("------------------------------------------------------------------------------");
+
         List<ThongKeOT> danhSach = new ArrayList<>();
         for (NhanVien nv : DatabaseMock.dsNhanVien) {
             double soGio = 0;
@@ -188,20 +236,19 @@ public class VanHanhService {
                 }
             }
             if (soGio > 0) {
-                String hoTen = nv.getHo() + " " + nv.getTen();
-                danhSach.add(new ThongKeOT(nv.getMaNhanVien(), hoTen, soGio));
+                danhSach.add(new ThongKeOT(nv.getMaNhanVien(), nv.HoTenNV(), soGio));
             }
         }
 
         if (danhSach.isEmpty()) {
-            System.out.println("-> Không có nhân viên nào làm thêm giờ trong tháng " + thang + "/" + nam);
+            System.out.println("-> Không có nhân viên nào làm thêm giờ trong tháng này.");
             return;
         }
+
         danhSach.sort((a, b) -> Double.compare(b.soGio, a.soGio));
+        int rank = 1;
         for (ThongKeOT tk : danhSach) {
-            System.out.println("Mã NV: " + tk.maNV
-                    + " | Họ tên: " + tk.hoTen
-                    + " | Số giờ OT: " + tk.soGio);
+            System.out.printf("%-6d %-8d %-25s %.1f giờ%n", rank++, tk.maNV, tk.hoTen, tk.soGio);
         }
     }
 
@@ -209,17 +256,21 @@ public class VanHanhService {
     // CÂU 6: Bảng theo dõi đơn nghỉ phép đang CHỜ DUYỆT
     // =========================================================================
     public void theoDoiDonNghiPhep() {
-        System.out.println("=== DANH SÁCH ĐƠN NGHỈ PHÉP ĐANG CHỜ DUYỆT ===");
-        boolean timThay = false;
+        System.out.println("==============================================================================");
+        System.out.println("DANH SÁCH ĐƠN NGHỈ PHÉP ĐANG CHỜ DUYỆT");
+        System.out.println("==============================================================================");
+        System.out.printf("%-8s %-22s %-16s %-10s %-24s %s%n", "Mã đơn", "Người nộp", "Loại nghỉ", "Số ngày",
+                "Thời gian", "Người duyệt");
+        System.out.println("------------------------------------------------------------------------------");
 
+        boolean timThay = false;
         for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
             if (don.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET) {
                 timThay = true;
-
-                String tenNguoiNop = "Mã NV: " + don.getMaNhanVien();
+                String tenNguoiNop = "Mã " + don.getMaNhanVien();
                 for (NhanVien nv : DatabaseMock.dsNhanVien) {
                     if (nv.getMaNhanVien() == don.getMaNhanVien()) {
-                        tenNguoiNop = nv.getHo() + " " + nv.getTen();
+                        tenNguoiNop = nv.HoTenNV();
                         break;
                     }
                 }
@@ -228,20 +279,18 @@ public class VanHanhService {
                 if (don.getNguoiDuyet() != null) {
                     for (NhanVien nv : DatabaseMock.dsNhanVien) {
                         if (nv.getMaNhanVien() == don.getNguoiDuyet()) {
-                            tenNguoiDuyet = nv.getHo() + " " + nv.getTen();
+                            tenNguoiDuyet = nv.HoTenNV();
                             break;
                         }
                     }
                 }
 
                 long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
+                String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
 
-                System.out.println("- Mã đơn: " + don.getMaDonNghi()
-                        + " | Người nộp: " + tenNguoiNop
-                        + " | Loại nghỉ: " + don.getLoaiNghi()
-                        + " | Số ngày: " + soNgayNghi + " ngày (" + don.getNgayBatDau() + " -> " + don.getNgayKetThuc()
-                        + ")"
-                        + " | Người duyệt: " + tenNguoiDuyet);
+                System.out.printf("%-8d %-22s %-16s %-10s %-24s %s%n",
+                        don.getMaDonNghi(), tenNguoiNop, don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian,
+                        tenNguoiDuyet);
             }
         }
 
@@ -250,6 +299,7 @@ public class VanHanhService {
         }
     }
 
+    // =========================================================================
     // CÂU 7: Lịch sử nghỉ phép của một nhân viên
     // =========================================================================
     public void lsNghi(int maNV) {
@@ -266,31 +316,42 @@ public class VanHanhService {
             System.out.println("Không tìm thấy nhân viên có mã: " + maNV);
             return;
         }
-        System.out.println("=== LỊCH SỬ NGHỈ PHÉP: " + hoTen + " (Mã NV: " + maNV + ") ===");
-        boolean coDon = false;
 
+        System.out.println("==============================================================================");
+        System.out.printf("LỊCH SỬ NGHỈ PHÉP: %s (Mã %d)%n", hoTen, maNV);
+        System.out.println("==============================================================================");
+        System.out.printf("%-8s %-16s %-10s %-25s %-14s %s%n", "Mã đơn", "Loại nghỉ", "Số ngày", "Thời gian",
+                "Trạng thái", "Lý do");
+        System.out.println("------------------------------------------------------------------------------");
+
+        boolean coDon = false;
         for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
             if (don.getMaNhanVien() == maNV) {
                 coDon = true;
                 long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
-                System.out.println("- Mã đơn: " + don.getMaDonNghi()
-                        + " | Nhân Viên: " + hoTen
-                        + " | Loại nghỉ: " + don.getLoaiNghi()
-                        + " | Ngày nghỉ: " + don.getNgayBatDau() + " -> " + don.getNgayKetThuc()
-                        + " | Số ngày: " + soNgayNghi + " ngày"
-                        + " | Lý do: " + don.getLyDo()
-                        + " | Trạng thái: " + don.getTrangThaiDuyet());
+                String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
+
+                System.out.printf("%-8d %-16s %-10s %-25s %-14s %s%n",
+                        don.getMaDonNghi(), don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian, don.getTrangThaiDuyet(),
+                        don.getLyDo());
             }
         }
         if (!coDon) {
-            System.out.println("-> Nhân viên " + hoTen + " chưa có đơn xin nghỉ phép nào.");
+            System.out.println("-> Nhân viên chưa có đơn xin nghỉ phép nào.");
         }
     }
 
+    // =========================================================================
     // CÂU 8: Thống kê nhân viên đạt chuyên cần 100% trong tháng
     // =========================================================================
     public void thongkeChuyenCan(int thang, int nam) {
-        System.out.println("=== THỐNG KÊ NHÂN VIÊN ĐẠT CHUYÊN CẦN 100% (THÁNG " + thang + "/" + nam + ") ===");
+        System.out.println("==============================================================================");
+        System.out.printf("DANH SÁCH NHÂN VIÊN ĐẠT CHUYÊN CẦN 100%% - THÁNG %02d/%d%n", thang, nam);
+        System.out.println("==============================================================================");
+        System.out.printf("%-8s %-25s %-18s %s%n", "Mã NV", "Họ và tên", "Số ngày công", "Tỷ lệ đúng giờ");
+        System.out.println("------------------------------------------------------------------------------");
+
+        boolean timThay = false;
         for (NhanVien nv : DatabaseMock.dsNhanVien) {
             int tongcong = 0;
             int dungGio = 0;
@@ -305,11 +366,90 @@ public class VanHanhService {
                 }
             }
             if (tongcong == dungGio && dungGio > 0) {
-                System.out.println("Mã NV: " + nv.getMaNhanVien()
-                        + " | Họ tên: " + nv.getHo() + " " + nv.getTen()
-                        + " | Số ngày: " + dungGio);
+                timThay = true;
+                System.out.printf("%-8d %-25s %-18s %s%n",
+                        nv.getMaNhanVien(),
+                        nv.HoTenNV(),
+                        dungGio + "/" + tongcong + " ngày",
+                        "100%");
+            }
+        }
+        if (!timThay) {
+            System.out.println("-> Không có nhân viên nào đạt chuyên cần 100% trong tháng.");
+        }
+    }
+
+    // =========================================================================
+    // CÂU 9: Thống kê số lượng nhân viên theo từng loại hợp đồng lao động
+    // =========================================================================
+    public void thongkeHopDong() {
+        System.out.println("==============================================================================");
+        System.out.println("THỐNG KÊ NHÂN SỰ THEO TỪNG LOẠI HỢP ĐỒNG LAO ĐỘNG");
+        System.out.println("==============================================================================");
+
+        for (LoaiHopDong lhd : LoaiHopDong.values()) {
+            int count = 0;
+            for (HopDong hd : DatabaseMock.dsHopDong) {
+                if (hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN) {
+                    count++;
+                }
+            }
+
+            System.out.printf("%n>> LOẠI HỢP ĐỒNG: %s (%d nhân viên)%n", lhd, count);
+            if (count > 0) {
+                System.out.printf("   %-8s %-22s %-15s %s%n", "Mã NV", "Họ và tên", "Số hợp đồng", "Trạng thái HĐ");
+                System.out.println("   --------------------------------------------------------------------------");
+                for (HopDong hd : DatabaseMock.dsHopDong) {
+                    if (hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN) {
+                        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+                            if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
+                                System.out.printf("   %-8d %-22s %-15s %s%n",
+                                        nv.getMaNhanVien(),
+                                        nv.HoTenNV(),
+                                        hd.getSoHopDong(),
+                                        hd.getTrangThai());
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-    
+
+    // =========================================================================
+    // CÂU 10: Lọc các điều khoản pháp lý (Bảo mật hoặc Kỷ luật) trên hệ thống
+    // =========================================================================
+    public void locDieuKhoanPhapLy() {
+        System.out.println("==============================================================================");
+        System.out.println("DANH SÁCH ĐIỀU KHOẢN PHÁP LÝ (BẢO MẬT & KỶ LUẬT)");
+        System.out.println("==============================================================================");
+
+        boolean timThay = false;
+        for (DieuKhoanHopDong dk : DatabaseMock.dsDieuKhoanHopDong) {
+            String loai = dk.getLoaiDieuKhoan();
+            if (loai != null && (loai.equalsIgnoreCase("Bao mat") || loai.equalsIgnoreCase("Ky luat"))) {
+                timThay = true;
+
+                String soHD = "Mã HĐ: " + dk.getMaHopDong();
+                for (HopDong hd : DatabaseMock.dsHopDong) {
+                    if (hd.getMaHopDong() == dk.getMaHopDong()) {
+                        soHD = hd.getSoHopDong();
+                        break;
+                    }
+                }
+
+                System.out.printf("[%s] - Điều %d (%s): %s%n",
+                        dk.getLoaiDieuKhoan().toUpperCase(),
+                        dk.getSoThuTuDieu(),
+                        soHD,
+                        dk.getTieuDeDieuKhoan());
+                System.out.printf("   -> Nội dung: %s%n%n", dk.getNoiDungDieuKhoan());
+            }
+        }
+
+        if (!timThay) {
+            System.out.println("-> Không tìm thấy điều khoản bảo mật hoặc kỷ luật nào.");
+        }
+    }
+
 }
