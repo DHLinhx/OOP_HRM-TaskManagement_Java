@@ -286,4 +286,30 @@ public class VanHanhService {
             System.out.println("-> Nhân viên " + hoTen + " chưa có đơn xin nghỉ phép nào.");
         }
     }
+
+    // CÂU 8: Thống kê nhân viên đạt chuyên cần 100% trong tháng
+    // =========================================================================
+    public void thongkeChuyenCan(int thang, int nam) {
+        System.out.println("=== THỐNG KÊ NHÂN VIÊN ĐẠT CHUYÊN CẦN 100% (THÁNG " + thang + "/" + nam + ") ===");
+        for (NhanVien nv : DatabaseMock.dsNhanVien) {
+            int tongcong = 0;
+            int dungGio = 0;
+            for (ChamCong cc : DatabaseMock.dsChamCong) {
+                if (cc.getMaNhanVien() == nv.getMaNhanVien()
+                        && cc.getNgayLamViec().getMonthValue() == thang
+                        && cc.getNgayLamViec().getYear() == nam) {
+                    tongcong++;
+                    if (cc.getTrangThaiCong() == TrangThaiCong.DUNG_GIO) {
+                        dungGio++;
+                    }
+                }
+            }
+            if (tongcong == dungGio && dungGio > 0) {
+                System.out.println("Mã NV: " + nv.getMaNhanVien()
+                        + " | Họ tên: " + nv.getHo() + " " + nv.getTen()
+                        + " | Số ngày: " + dungGio);
+            }
+        }
+    }
+    
 }
