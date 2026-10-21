@@ -9,56 +9,75 @@ import com.hrmis.models.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VanHanhService {
+
+    // Helper: Tìm tên nhân viên theo mã (dùng Stream & Lambda)
+    private String getTenNhanVien(int maNV) {
+        return DatabaseMock.dsNhanVien.stream()
+                .filter(nv -> nv.getMaNhanVien() == maNV)
+                .map(NhanVien::HoTenNV)
+                .findFirst()
+                .orElse("Mã " + maNV);
+    }
+
+    // Helper: Tìm tên ca làm việc theo mã (dùng Stream & Lambda)
+    private String getTenCa(int maCa) {
+        return DatabaseMock.dsCaLamViec.stream()
+                .filter(ca -> ca.getMaCa() == maCa)
+                .map(CaLamViec::getTenCa)
+                .findFirst()
+                .orElse("Ca " + maCa);
+    }
+
+    // Helper: Tìm số hợp đồng theo mã hợp đồng (dùng Stream & Lambda)
+    private String getSoHopDong(int maHopDong) {
+        return DatabaseMock.dsHopDong.stream()
+                .filter(hd -> hd.getMaHopDong() == maHopDong)
+                .map(HopDong::getSoHopDong)
+                .findFirst()
+                .orElse("Mã HĐ: " + maHopDong);
+    }
 
     // =========================================================================
     // CÂU 1: Bản in hợp đồng chi tiết
     // =========================================================================
     public void inHopDongChiTiet(int maHopDong) {
-        for (HopDong hd : DatabaseMock.dsHopDong) {
-            if (hd.getMaHopDong() == maHopDong) {
-                // Lấy thông tin nhân viên ký kết
-                String tenNV = "Mã " + hd.getMaNhanVien();
-                for (NhanVien nv : DatabaseMock.dsNhanVien) {
-                    if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
-                        tenNV = nv.HoTenNV() + " (Mã " + nv.getMaNhanVien() + ")";
-                        break;
+        DatabaseMock.dsHopDong.stream()
+                .filter(hd -> hd.getMaHopDong() == maHopDong)
+                .findFirst()
+                .ifPresentOrElse(hd -> {
+                    String tenNV = getTenNhanVien(hd.getMaNhanVien()) + " (Mã " + hd.getMaNhanVien() + ")";
+
+                    System.out.println("==============================================================================");
+                    System.out.println("CHI TIẾT HỢP ĐỒNG LAO ĐỘNG: " + hd.getSoHopDong());
+                    System.out.println("==============================================================================");
+                    System.out.printf("Nhân viên ký kết : %s%n", tenNV);
+                    System.out.printf("Loại hợp đồng    : %s%n", hd.getLoaiHopDong());
+                    System.out.printf("Thời hạn         : %s -> %s%n",
+                            hd.getNgayHieuLuc(),
+                            hd.getNgayHetHan() != null ? hd.getNgayHetHan() : "Vô thời hạn");
+                    System.out.printf("Lương thỏa thuận : %,.0f VNĐ%n", hd.getLuongThoaThuan());
+                    System.out.printf("Trạng thái       : %s%n", hd.getTrangThai());
+                    System.out.println("------------------------------------------------------------------------------");
+                    System.out.println("CÁC ĐIỀU KHOẢN ĐIỀU KIỆN KÈM THEO:");
+
+                    List<DieuKhoanHopDong> dsDK = DatabaseMock.dsDieuKhoanHopDong.stream()
+                            .filter(dk -> dk.getMaHopDong() == maHopDong)
+                            .collect(Collectors.toList());
+
+                    if (dsDK.isEmpty()) {
+                        System.out.println("  (Hợp đồng không có điều khoản phụ kèm theo)");
+                    } else {
+                        dsDK.forEach(dk -> {
+                            System.out.printf("  [Điều %d] %-25s (%s)%n", dk.getSoThuTuDieu(), dk.getTieuDeDieuKhoan(), dk.getLoaiDieuKhoan());
+                            System.out.printf("          -> %s%n", dk.getNoiDungDieuKhoan());
+                        });
                     }
-                }
-
-                System.out.println("==============================================================================");
-                System.out.println("CHI TIẾT HỢP ĐỒNG LAO ĐỘNG: " + hd.getSoHopDong());
-                System.out.println("==============================================================================");
-                System.out.printf("Nhân viên ký kết : %s%n", tenNV);
-                System.out.printf("Loại hợp đồng    : %s%n", hd.getLoaiHopDong());
-                System.out.printf("Thời hạn         : %s -> %s%n",
-                        hd.getNgayHieuLuc(),
-                        hd.getNgayHetHan() != null ? hd.getNgayHetHan() : "Vô thời hạn");
-                System.out.printf("Lương thỏa thuận : %,.0f VNĐ%n", hd.getLuongThoaThuan());
-                System.out.printf("Trạng thái       : %s%n", hd.getTrangThai());
-                System.out.println("------------------------------------------------------------------------------");
-                System.out.println("CÁC ĐIỀU KHOẢN ĐIỀU KIỆN KÈM THEO:");
-
-                boolean coDieuKhoan = false;
-                for (DieuKhoanHopDong dk : DatabaseMock.dsDieuKhoanHopDong) {
-                    if (dk.getMaHopDong() == maHopDong) {
-                        coDieuKhoan = true;
-                        System.out.printf("  [Điều %d] %-25s (%s)%n", dk.getSoThuTuDieu(), dk.getTieuDeDieuKhoan(),
-                                dk.getLoaiDieuKhoan());
-                        System.out.printf("          -> %s%n", dk.getNoiDungDieuKhoan());
-                    }
-                }
-                if (!coDieuKhoan) {
-                    System.out.println("  (Hợp đồng không có điều khoản phụ kèm theo)");
-                }
-                return;
-            }
-        }
-
-        System.out.println("Không tìm thấy hợp đồng có mã: " + maHopDong);
+                }, () -> System.out.println("Không tìm thấy hợp đồng có mã: " + maHopDong));
     }
 
     // =========================================================================
@@ -68,98 +87,75 @@ public class VanHanhService {
         System.out.println("==============================================================================");
         System.out.println("CẢNH BÁO HỢP ĐỒNG SẮP HẾT HẠN (30 NGÀY TỪ " + mocThoiGian + ")");
         System.out.println("==============================================================================");
-        System.out.printf("%-14s %-8s %-22s %-18s %s%n", "Số HĐ", "Mã NV", "Họ và tên", "Loại hợp đồng",
-                "Ngày hết hạn");
+        System.out.printf("%-14s %-8s %-22s %-18s %s%n", "Số HĐ", "Mã NV", "Họ và tên", "Loại hợp đồng", "Ngày hết hạn");
         System.out.println("------------------------------------------------------------------------------");
 
         LocalDate moc30NgaySau = mocThoiGian.plusDays(30);
-        boolean timThay = false;
 
-        for (HopDong hd : DatabaseMock.dsHopDong) {
-            if (hd.getNgayHetHan() != null) {
-                LocalDate ngayHetHan = hd.getNgayHetHan();
-                if (!ngayHetHan.isBefore(mocThoiGian) && !ngayHetHan.isAfter(moc30NgaySau)) {
-                    timThay = true;
-                    String hoTen = "";
-                    for (NhanVien nv : DatabaseMock.dsNhanVien) {
-                        if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
-                            hoTen = nv.HoTenNV();
-                            break;
-                        }
-                    }
-                    System.out.printf("%-14s %-8d %-22s %-18s %s%n",
-                            hd.getSoHopDong(), hd.getMaNhanVien(), hoTen, hd.getLoaiHopDong(), ngayHetHan);
-                }
-            }
-        }
+        List<HopDong> dsSapHetHan = DatabaseMock.dsHopDong.stream()
+                .filter(hd -> hd.getNgayHetHan() != null
+                        && !hd.getNgayHetHan().isBefore(mocThoiGian)
+                        && !hd.getNgayHetHan().isAfter(moc30NgaySau))
+                .collect(Collectors.toList());
 
-        if (!timThay) {
+        if (dsSapHetHan.isEmpty()) {
             System.out.println("-> Không có hợp đồng nào sắp hết hạn trong 30 ngày tới.");
+            return;
         }
+
+        dsSapHetHan.forEach(hd -> {
+            String hoTen = getTenNhanVien(hd.getMaNhanVien());
+            System.out.printf("%-14s %-8d %-22s %-18s %s%n",
+                    hd.getSoHopDong(), hd.getMaNhanVien(), hoTen, hd.getLoaiHopDong(), hd.getNgayHetHan());
+        });
     }
 
     // =========================================================================
     // CÂU 3: Bảng chấm công cá nhân theo tháng/năm
     // =========================================================================
     public void inBangChamCongCaNhan(int maNhanVien, int thang, int nam) {
-        String hoTen = "Mã " + maNhanVien;
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            if (nv.getMaNhanVien() == maNhanVien) {
-                hoTen = nv.HoTenNV();
-                break;
-            }
-        }
+        String hoTen = getTenNhanVien(maNhanVien);
 
         System.out.println("==============================================================================");
         System.out.printf("BẢNG CHẤM CÔNG NHÂN VIÊN: %s (Mã %d) - THÁNG %02d/%d%n", hoTen, maNhanVien, thang, nam);
         System.out.println("==============================================================================");
-        System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n", "Ngày", "Ca làm việc", "Giờ vào", "Giờ ra",
-                "Số giờ làm", "Trạng thái");
+        System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n", "Ngày", "Ca làm việc", "Giờ vào", "Giờ ra", "Số giờ làm", "Trạng thái");
         System.out.println("------------------------------------------------------------------------------");
 
-        boolean timThay = false;
-        for (ChamCong cc : DatabaseMock.dsChamCong) {
-            if (cc.getMaNhanVien() == maNhanVien
-                    && cc.getNgayLamViec().getMonthValue() == thang
-                    && cc.getNgayLamViec().getYear() == nam) {
+        List<ChamCong> dsCong = DatabaseMock.dsChamCong.stream()
+                .filter(cc -> cc.getMaNhanVien() == maNhanVien
+                        && cc.getNgayLamViec().getMonthValue() == thang
+                        && cc.getNgayLamViec().getYear() == nam)
+                .collect(Collectors.toList());
 
-                timThay = true;
-                String tenCa = "Ca " + cc.getMaCa();
-                for (CaLamViec ca : DatabaseMock.dsCaLamViec) {
-                    if (ca.getMaCa() == cc.getMaCa()) {
-                        tenCa = ca.getTenCa();
-                        break;
-                    }
-                }
-
-                double soGioLam = 0.0;
-                if (cc.getGioVaoThucTe() != null && cc.getGioRaThucTe() != null) {
-                    long soPhut = Duration.between(cc.getGioVaoThucTe(), cc.getGioRaThucTe()).toMinutes();
-                    soGioLam = soPhut / 60.0;
-                }
-
-                System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n",
-                        cc.getNgayLamViec(),
-                        tenCa,
-                        cc.getGioVaoThucTe(),
-                        cc.getGioRaThucTe(),
-                        String.format("%.1f giờ", soGioLam),
-                        cc.getTrangThaiCong());
-            }
-        }
-
-        if (!timThay) {
+        if (dsCong.isEmpty()) {
             System.out.println("-> Không tìm thấy dữ liệu chấm công trong tháng này.");
+            return;
         }
+
+        dsCong.forEach(cc -> {
+            String tenCa = getTenCa(cc.getMaCa());
+            double soGioLam = (cc.getGioVaoThucTe() != null && cc.getGioRaThucTe() != null)
+                    ? Duration.between(cc.getGioVaoThucTe(), cc.getGioRaThucTe()).toMinutes() / 60.0
+                    : 0.0;
+
+            System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n",
+                    cc.getNgayLamViec(),
+                    tenCa,
+                    cc.getGioVaoThucTe(),
+                    cc.getGioRaThucTe(),
+                    String.format("%.1f giờ", soGioLam),
+                    cc.getTrangThaiCong());
+        });
     }
 
     // =========================================================================
     // CÂU 4: Báo cáo đi trễ trong tháng (sắp xếp giảm dần theo số lần vi phạm)
     // =========================================================================
-    static class ThongKeDiTre {
-        int maNV;
-        String hoTen;
-        int soLan;
+    public static class ThongKeDiTre {
+        public int maNV;
+        public String hoTen;
+        public int soLan;
 
         public ThongKeDiTre(int maNV, String hoTen, int soLan) {
             this.maNV = maNV;
@@ -175,41 +171,36 @@ public class VanHanhService {
         System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Số lần đi trễ");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<ThongKeDiTre> danhSach = new ArrayList<>();
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            int soLanTre = 0;
-            for (ChamCong cc : DatabaseMock.dsChamCong) {
-                if (cc.getMaNhanVien() == nv.getMaNhanVien()
-                        && cc.getNgayLamViec().getMonthValue() == thang
-                        && cc.getNgayLamViec().getYear() == nam
-                        && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE) {
-                    soLanTre++;
-                }
-            }
-            if (soLanTre > 0) {
-                danhSach.add(new ThongKeDiTre(nv.getMaNhanVien(), nv.HoTenNV(), soLanTre));
-            }
-        }
+        List<ThongKeDiTre> danhSach = DatabaseMock.dsNhanVien.stream()
+                .map(nv -> {
+                    long soLanTre = DatabaseMock.dsChamCong.stream()
+                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
+                                    && cc.getNgayLamViec().getMonthValue() == thang
+                                    && cc.getNgayLamViec().getYear() == nam
+                                    && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE)
+                            .count();
+                    return new ThongKeDiTre(nv.getMaNhanVien(), nv.HoTenNV(), (int) soLanTre);
+                })
+                .filter(tk -> tk.soLan > 0)
+                .sorted((a, b) -> Integer.compare(b.soLan, a.soLan))
+                .collect(Collectors.toList());
 
         if (danhSach.isEmpty()) {
             System.out.println("-> Tuyệt vời! Không có nhân viên nào đi trễ trong tháng này.");
             return;
         }
 
-        danhSach.sort((a, b) -> Integer.compare(b.soLan, a.soLan));
-        int rank = 1;
-        for (ThongKeDiTre tk : danhSach) {
-            System.out.printf("%-6d %-8d %-25s %d lần%n", rank++, tk.maNV, tk.hoTen, tk.soLan);
-        }
+        int[] rank = {1};
+        danhSach.forEach(tk -> System.out.printf("%-6d %-8d %-25s %d lần%n", rank[0]++, tk.maNV, tk.hoTen, tk.soLan));
     }
 
     // =========================================================================
     // CÂU 5: Báo cáo nhân viên làm thêm giờ (OT) trong tháng
     // =========================================================================
-    static class ThongKeOT {
-        int maNV;
-        String hoTen;
-        double soGio;
+    public static class ThongKeOT {
+        public int maNV;
+        public String hoTen;
+        public double soGio;
 
         public ThongKeOT(int maNV, String hoTen, double soGio) {
             this.maNV = maNV;
@@ -225,31 +216,27 @@ public class VanHanhService {
         System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Tổng số giờ OT");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<ThongKeOT> danhSach = new ArrayList<>();
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            double soGio = 0;
-            for (ChamCong cc : DatabaseMock.dsChamCong) {
-                if (cc.getMaNhanVien() == nv.getMaNhanVien()
-                        && cc.getNgayLamViec().getMonthValue() == thang
-                        && cc.getNgayLamViec().getYear() == nam) {
-                    soGio += cc.getSoGioLamThem();
-                }
-            }
-            if (soGio > 0) {
-                danhSach.add(new ThongKeOT(nv.getMaNhanVien(), nv.HoTenNV(), soGio));
-            }
-        }
+        List<ThongKeOT> danhSach = DatabaseMock.dsNhanVien.stream()
+                .map(nv -> {
+                    double soGio = DatabaseMock.dsChamCong.stream()
+                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
+                                    && cc.getNgayLamViec().getMonthValue() == thang
+                                    && cc.getNgayLamViec().getYear() == nam)
+                            .mapToDouble(ChamCong::getSoGioLamThem)
+                            .sum();
+                    return new ThongKeOT(nv.getMaNhanVien(), nv.HoTenNV(), soGio);
+                })
+                .filter(tk -> tk.soGio > 0)
+                .sorted((a, b) -> Double.compare(b.soGio, a.soGio))
+                .collect(Collectors.toList());
 
         if (danhSach.isEmpty()) {
             System.out.println("-> Không có nhân viên nào làm thêm giờ trong tháng này.");
             return;
         }
 
-        danhSach.sort((a, b) -> Double.compare(b.soGio, a.soGio));
-        int rank = 1;
-        for (ThongKeOT tk : danhSach) {
-            System.out.printf("%-6d %-8d %-25s %.1f giờ%n", rank++, tk.maNV, tk.hoTen, tk.soGio);
-        }
+        int[] rank = {1};
+        danhSach.forEach(tk -> System.out.printf("%-6d %-8d %-25s %.1f giờ%n", rank[0]++, tk.maNV, tk.hoTen, tk.soGio));
     }
 
     // =========================================================================
@@ -259,86 +246,63 @@ public class VanHanhService {
         System.out.println("==============================================================================");
         System.out.println("DANH SÁCH ĐƠN NGHỈ PHÉP ĐANG CHỜ DUYỆT");
         System.out.println("==============================================================================");
-        System.out.printf("%-8s %-22s %-16s %-10s %-24s %s%n", "Mã đơn", "Người nộp", "Loại nghỉ", "Số ngày",
-                "Thời gian", "Người duyệt");
+        System.out.printf("%-8s %-22s %-16s %-10s %-24s %s%n", "Mã đơn", "Người nộp", "Loại nghỉ", "Số ngày", "Thời gian", "Người duyệt");
         System.out.println("------------------------------------------------------------------------------");
 
-        boolean timThay = false;
-        for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
-            if (don.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET) {
-                timThay = true;
-                String tenNguoiNop = "Mã " + don.getMaNhanVien();
-                for (NhanVien nv : DatabaseMock.dsNhanVien) {
-                    if (nv.getMaNhanVien() == don.getMaNhanVien()) {
-                        tenNguoiNop = nv.HoTenNV();
-                        break;
-                    }
-                }
+        List<DonXinNghi> dsChoDuyet = DatabaseMock.dsDonXinNghi.stream()
+                .filter(don -> don.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET)
+                .collect(Collectors.toList());
 
-                String tenNguoiDuyet = "Chưa chỉ định";
-                if (don.getNguoiDuyet() != null) {
-                    for (NhanVien nv : DatabaseMock.dsNhanVien) {
-                        if (nv.getMaNhanVien() == don.getNguoiDuyet()) {
-                            tenNguoiDuyet = nv.HoTenNV();
-                            break;
-                        }
-                    }
-                }
-
-                long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
-                String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
-
-                System.out.printf("%-8d %-22s %-16s %-10s %-24s %s%n",
-                        don.getMaDonNghi(), tenNguoiNop, don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian,
-                        tenNguoiDuyet);
-            }
-        }
-
-        if (!timThay) {
+        if (dsChoDuyet.isEmpty()) {
             System.out.println("-> Hiện không có đơn xin nghỉ phép nào đang chờ duyệt.");
+            return;
         }
+
+        dsChoDuyet.forEach(don -> {
+            String tenNguoiNop = getTenNhanVien(don.getMaNhanVien());
+            String tenNguoiDuyet = don.getNguoiDuyet() != null ? getTenNhanVien(don.getNguoiDuyet()) : "Chưa chỉ định";
+            long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
+            String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
+
+            System.out.printf("%-8d %-22s %-16s %-10s %-24s %s%n",
+                    don.getMaDonNghi(), tenNguoiNop, don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian, tenNguoiDuyet);
+        });
     }
 
     // =========================================================================
     // CÂU 7: Lịch sử nghỉ phép của một nhân viên
     // =========================================================================
     public void lsNghi(int maNV) {
-        String hoTen = "Không xác định";
-        boolean timThayNV = false;
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            if (nv.getMaNhanVien() == maNV) {
-                hoTen = nv.HoTenNV();
-                timThayNV = true;
-                break;
-            }
-        }
+        boolean timThayNV = DatabaseMock.dsNhanVien.stream().anyMatch(nv -> nv.getMaNhanVien() == maNV);
         if (!timThayNV) {
             System.out.println("Không tìm thấy nhân viên có mã: " + maNV);
             return;
         }
 
+        String hoTen = getTenNhanVien(maNV);
+
         System.out.println("==============================================================================");
         System.out.printf("LỊCH SỬ NGHỈ PHÉP: %s (Mã %d)%n", hoTen, maNV);
         System.out.println("==============================================================================");
-        System.out.printf("%-8s %-16s %-10s %-25s %-14s %s%n", "Mã đơn", "Loại nghỉ", "Số ngày", "Thời gian",
-                "Trạng thái", "Lý do");
+        System.out.printf("%-8s %-16s %-10s %-25s %-14s %s%n", "Mã đơn", "Loại nghỉ", "Số ngày", "Thời gian", "Trạng thái", "Lý do");
         System.out.println("------------------------------------------------------------------------------");
 
-        boolean coDon = false;
-        for (DonXinNghi don : DatabaseMock.dsDonXinNghi) {
-            if (don.getMaNhanVien() == maNV) {
-                coDon = true;
-                long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
-                String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
+        List<DonXinNghi> dsNghi = DatabaseMock.dsDonXinNghi.stream()
+                .filter(don -> don.getMaNhanVien() == maNV)
+                .collect(Collectors.toList());
 
-                System.out.printf("%-8d %-16s %-10s %-25s %-14s %s%n",
-                        don.getMaDonNghi(), don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian, don.getTrangThaiDuyet(),
-                        don.getLyDo());
-            }
-        }
-        if (!coDon) {
+        if (dsNghi.isEmpty()) {
             System.out.println("-> Nhân viên chưa có đơn xin nghỉ phép nào.");
+            return;
         }
+
+        dsNghi.forEach(don -> {
+            long soNgayNghi = don.getNgayKetThuc().toEpochDay() - don.getNgayBatDau().toEpochDay() + 1;
+            String thoiGian = don.getNgayBatDau() + " -> " + don.getNgayKetThuc();
+
+            System.out.printf("%-8d %-16s %-10s %-25s %-14s %s%n",
+                    don.getMaDonNghi(), don.getLoaiNghi(), soNgayNghi + " ngày", thoiGian, don.getTrangThaiDuyet(), don.getLyDo());
+        });
     }
 
     // =========================================================================
@@ -351,32 +315,40 @@ public class VanHanhService {
         System.out.printf("%-8s %-25s %-18s %s%n", "Mã NV", "Họ và tên", "Số ngày công", "Tỷ lệ đúng giờ");
         System.out.println("------------------------------------------------------------------------------");
 
-        boolean timThay = false;
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            int tongcong = 0;
-            int dungGio = 0;
-            for (ChamCong cc : DatabaseMock.dsChamCong) {
-                if (cc.getMaNhanVien() == nv.getMaNhanVien()
-                        && cc.getNgayLamViec().getMonthValue() == thang
-                        && cc.getNgayLamViec().getYear() == nam) {
-                    tongcong++;
-                    if (cc.getTrangThaiCong() == TrangThaiCong.DUNG_GIO) {
-                        dungGio++;
-                    }
-                }
-            }
-            if (tongcong == dungGio && dungGio > 0) {
-                timThay = true;
-                System.out.printf("%-8d %-25s %-18s %s%n",
-                        nv.getMaNhanVien(),
-                        nv.HoTenNV(),
-                        dungGio + "/" + tongcong + " ngày",
-                        "100%");
-            }
-        }
-        if (!timThay) {
+        List<NhanVien> dsChuyenCan = DatabaseMock.dsNhanVien.stream()
+                .filter(nv -> {
+                    long tongCong = DatabaseMock.dsChamCong.stream()
+                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
+                                    && cc.getNgayLamViec().getMonthValue() == thang
+                                    && cc.getNgayLamViec().getYear() == nam)
+                            .count();
+                    long dungGio = DatabaseMock.dsChamCong.stream()
+                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
+                                    && cc.getNgayLamViec().getMonthValue() == thang
+                                    && cc.getNgayLamViec().getYear() == nam
+                                    && cc.getTrangThaiCong() == TrangThaiCong.DUNG_GIO)
+                            .count();
+                    return tongCong > 0 && tongCong == dungGio;
+                })
+                .collect(Collectors.toList());
+
+        if (dsChuyenCan.isEmpty()) {
             System.out.println("-> Không có nhân viên nào đạt chuyên cần 100% trong tháng.");
+            return;
         }
+
+        dsChuyenCan.forEach(nv -> {
+            long tongCong = DatabaseMock.dsChamCong.stream()
+                    .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
+                            && cc.getNgayLamViec().getMonthValue() == thang
+                            && cc.getNgayLamViec().getYear() == nam)
+                    .count();
+            System.out.printf("%-8d %-25s %-18s %s%n",
+                    nv.getMaNhanVien(),
+                    nv.HoTenNV(),
+                    tongCong + "/" + tongCong + " ngày",
+                    "100%");
+        });
     }
 
     // =========================================================================
@@ -387,33 +359,25 @@ public class VanHanhService {
         System.out.println("THỐNG KÊ NHÂN SỰ THEO TỪNG LOẠI HỢP ĐỒNG LAO ĐỘNG");
         System.out.println("==============================================================================");
 
-        for (LoaiHopDong lhd : LoaiHopDong.values()) {
-            int count = 0;
-            for (HopDong hd : DatabaseMock.dsHopDong) {
-                if (hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN) {
-                    count++;
-                }
-            }
+        Arrays.stream(LoaiHopDong.values()).forEach(lhd -> {
+            List<HopDong> dsHDTheoLoai = DatabaseMock.dsHopDong.stream()
+                    .filter(hd -> hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN)
+                    .collect(Collectors.toList());
 
-            System.out.printf("%n>> LOẠI HỢP ĐỒNG: %s (%d nhân viên)%n", lhd, count);
-            if (count > 0) {
+            System.out.printf("%n>> LOẠI HỢP ĐỒNG: %s (%d nhân viên)%n", lhd, dsHDTheoLoai.size());
+            if (!dsHDTheoLoai.isEmpty()) {
                 System.out.printf("   %-8s %-22s %-15s %s%n", "Mã NV", "Họ và tên", "Số hợp đồng", "Trạng thái HĐ");
                 System.out.println("   --------------------------------------------------------------------------");
-                for (HopDong hd : DatabaseMock.dsHopDong) {
-                    if (hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN) {
-                        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-                            if (nv.getMaNhanVien() == hd.getMaNhanVien()) {
-                                System.out.printf("   %-8d %-22s %-15s %s%n",
-                                        nv.getMaNhanVien(),
-                                        nv.HoTenNV(),
-                                        hd.getSoHopDong(),
-                                        hd.getTrangThai());
-                            }
-                        }
-                    }
-                }
+                dsHDTheoLoai.forEach(hd -> {
+                    String hoTen = getTenNhanVien(hd.getMaNhanVien());
+                    System.out.printf("   %-8d %-22s %-15s %s%n",
+                            hd.getMaNhanVien(),
+                            hoTen,
+                            hd.getSoHopDong(),
+                            hd.getTrangThai());
+                });
             }
-        }
+        });
     }
 
     // =========================================================================
@@ -424,32 +388,24 @@ public class VanHanhService {
         System.out.println("DANH SÁCH ĐIỀU KHOẢN PHÁP LÝ (BẢO MẬT & KỶ LUẬT)");
         System.out.println("==============================================================================");
 
-        boolean timThay = false;
-        for (DieuKhoanHopDong dk : DatabaseMock.dsDieuKhoanHopDong) {
-            String loai = dk.getLoaiDieuKhoan();
-            if (loai != null && (loai.equalsIgnoreCase("Bao mat") || loai.equalsIgnoreCase("Ky luat"))) {
-                timThay = true;
+        List<DieuKhoanHopDong> dsDKPhapLy = DatabaseMock.dsDieuKhoanHopDong.stream()
+                .filter(dk -> dk.getLoaiDieuKhoan() != null &&
+                        (dk.getLoaiDieuKhoan().equalsIgnoreCase("Bao mat") || dk.getLoaiDieuKhoan().equalsIgnoreCase("Ky luat")))
+                .collect(Collectors.toList());
 
-                String soHD = "Mã HĐ: " + dk.getMaHopDong();
-                for (HopDong hd : DatabaseMock.dsHopDong) {
-                    if (hd.getMaHopDong() == dk.getMaHopDong()) {
-                        soHD = hd.getSoHopDong();
-                        break;
-                    }
-                }
-
-                System.out.printf("[%s] - Điều %d (%s): %s%n",
-                        dk.getLoaiDieuKhoan().toUpperCase(),
-                        dk.getSoThuTuDieu(),
-                        soHD,
-                        dk.getTieuDeDieuKhoan());
-                System.out.printf("   -> Nội dung: %s%n%n", dk.getNoiDungDieuKhoan());
-            }
-        }
-
-        if (!timThay) {
+        if (dsDKPhapLy.isEmpty()) {
             System.out.println("-> Không tìm thấy điều khoản bảo mật hoặc kỷ luật nào.");
+            return;
         }
-    }
 
+        dsDKPhapLy.forEach(dk -> {
+            String soHD = getSoHopDong(dk.getMaHopDong());
+            System.out.printf("[%s] - Điều %d (%s): %s%n",
+                    dk.getLoaiDieuKhoan().toUpperCase(),
+                    dk.getSoThuTuDieu(),
+                    soHD,
+                    dk.getTieuDeDieuKhoan());
+            System.out.printf("   -> Nội dung: %s%n%n", dk.getNoiDungDieuKhoan());
+        });
+    }
 }
