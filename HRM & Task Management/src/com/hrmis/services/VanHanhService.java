@@ -1,6 +1,6 @@
 package com.hrmis.services;
 
-import com.hrmis.data.DatabaseMock;
+import com.hrmis.dao.*;
 import com.hrmis.enums.LoaiHopDong;
 import com.hrmis.enums.TrangThaiCong;
 import com.hrmis.enums.TrangThaiDuyet;
@@ -15,30 +15,30 @@ import java.util.stream.Collectors;
 
 public class VanHanhService {
 
-    // Helper: Tìm tên nhân viên theo mã (dùng Stream & Lambda)
+    // Khai báo các đối tượng DAO theo chuẩn mô hình phân tầng
+    private final HopDongDAO hopDongDAO = new HopDongDAO();
+    private final DieuKhoanHopDongDAO dieuKhoanDAO = new DieuKhoanHopDongDAO();
+    private final ChamCongDAO chamCongDAO = new ChamCongDAO();
+    private final DonXinNghiDAO donXinNghiDAO = new DonXinNghiDAO();
+    private final NhanVienDAO nhanVienDAO = new NhanVienDAO();
+    private final CaLamViecDAO caLamViecDAO = new CaLamViecDAO();
+
+    // Helper: Tìm tên nhân viên theo mã (dùng DAO & Stream)
     private String getTenNhanVien(int maNV) {
-        return DatabaseMock.dsNhanVien.stream()
-                .filter(nv -> nv.getMaNhanVien() == maNV)
+        return nhanVienDAO.getById(maNV)
                 .map(NhanVien::HoTenNV)
-                .findFirst()
                 .orElse("Mã " + maNV);
     }
 
-    // Helper: Tìm tên ca làm việc theo mã (dùng Stream & Lambda)
+    // Helper: Tìm tên ca làm việc theo mã (dùng DAO)
     private String getTenCa(int maCa) {
-        return DatabaseMock.dsCaLamViec.stream()
-                .filter(ca -> ca.getMaCa() == maCa)
-                .map(CaLamViec::getTenCa)
-                .findFirst()
-                .orElse("Ca " + maCa);
+        return caLamViecDAO.getTenCa(maCa);
     }
 
-    // Helper: Tìm số hợp đồng theo mã hợp đồng (dùng Stream & Lambda)
+    // Helper: Tìm số hợp đồng theo mã hợp đồng (dùng DAO)
     private String getSoHopDong(int maHopDong) {
-        return DatabaseMock.dsHopDong.stream()
-                .filter(hd -> hd.getMaHopDong() == maHopDong)
+        return hopDongDAO.getById(maHopDong)
                 .map(HopDong::getSoHopDong)
-                .findFirst()
                 .orElse("Mã HĐ: " + maHopDong);
     }
 
@@ -46,9 +46,7 @@ public class VanHanhService {
     // CÂU 1: Bản in hợp đồng chi tiết
     // =========================================================================
     public void inHopDongChiTiet(int maHopDong) {
-        DatabaseMock.dsHopDong.stream()
-                .filter(hd -> hd.getMaHopDong() == maHopDong)
-                .findFirst()
+        hopDongDAO.getById(maHopDong)
                 .ifPresentOrElse(hd -> {
                     String tenNV = getTenNhanVien(hd.getMaNhanVien()) + " (Mã " + hd.getMaNhanVien() + ")";
 
@@ -65,9 +63,7 @@ public class VanHanhService {
                     System.out.println("------------------------------------------------------------------------------");
                     System.out.println("CÁC ĐIỀU KHOẢN ĐIỀU KIỆN KÈM THEO:");
 
-                    List<DieuKhoanHopDong> dsDK = DatabaseMock.dsDieuKhoanHopDong.stream()
-                            .filter(dk -> dk.getMaHopDong() == maHopDong)
-                            .collect(Collectors.toList());
+                    List<DieuKhoanHopDong> dsDK = dieuKhoanDAO.getByHopDong(maHopDong);
 
                     if (dsDK.isEmpty()) {
                         System.out.println("  (Hợp đồng không có điều khoản phụ kèm theo)");
@@ -90,13 +86,7 @@ public class VanHanhService {
         System.out.printf("%-14s %-8s %-22s %-18s %s%n", "Số HĐ", "Mã NV", "Họ và tên", "Loại hợp đồng", "Ngày hết hạn");
         System.out.println("------------------------------------------------------------------------------");
 
-        LocalDate moc30NgaySau = mocThoiGian.plusDays(30);
-
-        List<HopDong> dsSapHetHan = DatabaseMock.dsHopDong.stream()
-                .filter(hd -> hd.getNgayHetHan() != null
-                        && !hd.getNgayHetHan().isBefore(mocThoiGian)
-                        && !hd.getNgayHetHan().isAfter(moc30NgaySau))
-                .collect(Collectors.toList());
+        List<HopDong> dsSapHetHan = hopDongDAO.getSapHetHan(mocThoiGian, 30);
 
         if (dsSapHetHan.isEmpty()) {
             System.out.println("-> Không có hợp đồng nào sắp hết hạn trong 30 ngày tới.");
@@ -122,11 +112,7 @@ public class VanHanhService {
         System.out.printf("%-12s %-18s %-10s %-10s %-12s %s%n", "Ngày", "Ca làm việc", "Giờ vào", "Giờ ra", "Số giờ làm", "Trạng thái");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<ChamCong> dsCong = DatabaseMock.dsChamCong.stream()
-                .filter(cc -> cc.getMaNhanVien() == maNhanVien
-                        && cc.getNgayLamViec().getMonthValue() == thang
-                        && cc.getNgayLamViec().getYear() == nam)
-                .collect(Collectors.toList());
+        List<ChamCong> dsCong = chamCongDAO.getByNhanVienVaThang(maNhanVien, thang, nam);
 
         if (dsCong.isEmpty()) {
             System.out.println("-> Không tìm thấy dữ liệu chấm công trong tháng này.");
@@ -171,15 +157,10 @@ public class VanHanhService {
         System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Số lần đi trễ");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<ThongKeDiTre> danhSach = DatabaseMock.dsNhanVien.stream()
+        List<ThongKeDiTre> danhSach = nhanVienDAO.getAll().stream()
                 .map(nv -> {
-                    long soLanTre = DatabaseMock.dsChamCong.stream()
-                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
-                                    && cc.getNgayLamViec().getMonthValue() == thang
-                                    && cc.getNgayLamViec().getYear() == nam
-                                    && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE)
-                            .count();
-                    return new ThongKeDiTre(nv.getMaNhanVien(), nv.HoTenNV(), (int) soLanTre);
+                    int soLanTre = (int) chamCongDAO.countDiTre(nv.getMaNhanVien(), thang, nam);
+                    return new ThongKeDiTre(nv.getMaNhanVien(), nv.HoTenNV(), soLanTre);
                 })
                 .filter(tk -> tk.soLan > 0)
                 .sorted((a, b) -> Integer.compare(b.soLan, a.soLan))
@@ -216,14 +197,9 @@ public class VanHanhService {
         System.out.printf("%-6s %-8s %-25s %s%n", "Hạng", "Mã NV", "Họ và tên", "Tổng số giờ OT");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<ThongKeOT> danhSach = DatabaseMock.dsNhanVien.stream()
+        List<ThongKeOT> danhSach = nhanVienDAO.getAll().stream()
                 .map(nv -> {
-                    double soGio = DatabaseMock.dsChamCong.stream()
-                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
-                                    && cc.getNgayLamViec().getMonthValue() == thang
-                                    && cc.getNgayLamViec().getYear() == nam)
-                            .mapToDouble(ChamCong::getSoGioLamThem)
-                            .sum();
+                    double soGio = chamCongDAO.sumGioOT(nv.getMaNhanVien(), thang, nam);
                     return new ThongKeOT(nv.getMaNhanVien(), nv.HoTenNV(), soGio);
                 })
                 .filter(tk -> tk.soGio > 0)
@@ -249,9 +225,7 @@ public class VanHanhService {
         System.out.printf("%-8s %-22s %-16s %-10s %-24s %s%n", "Mã đơn", "Người nộp", "Loại nghỉ", "Số ngày", "Thời gian", "Người duyệt");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<DonXinNghi> dsChoDuyet = DatabaseMock.dsDonXinNghi.stream()
-                .filter(don -> don.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET)
-                .collect(Collectors.toList());
+        List<DonXinNghi> dsChoDuyet = donXinNghiDAO.getChoDuyet();
 
         if (dsChoDuyet.isEmpty()) {
             System.out.println("-> Hiện không có đơn xin nghỉ phép nào đang chờ duyệt.");
@@ -273,7 +247,7 @@ public class VanHanhService {
     // CÂU 7: Lịch sử nghỉ phép của một nhân viên
     // =========================================================================
     public void lsNghi(int maNV) {
-        boolean timThayNV = DatabaseMock.dsNhanVien.stream().anyMatch(nv -> nv.getMaNhanVien() == maNV);
+        boolean timThayNV = nhanVienDAO.getById(maNV).isPresent();
         if (!timThayNV) {
             System.out.println("Không tìm thấy nhân viên có mã: " + maNV);
             return;
@@ -287,9 +261,7 @@ public class VanHanhService {
         System.out.printf("%-8s %-16s %-10s %-25s %-14s %s%n", "Mã đơn", "Loại nghỉ", "Số ngày", "Thời gian", "Trạng thái", "Lý do");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<DonXinNghi> dsNghi = DatabaseMock.dsDonXinNghi.stream()
-                .filter(don -> don.getMaNhanVien() == maNV)
-                .collect(Collectors.toList());
+        List<DonXinNghi> dsNghi = donXinNghiDAO.getByNhanVien(maNV);
 
         if (dsNghi.isEmpty()) {
             System.out.println("-> Nhân viên chưa có đơn xin nghỉ phép nào.");
@@ -315,21 +287,8 @@ public class VanHanhService {
         System.out.printf("%-8s %-25s %-18s %s%n", "Mã NV", "Họ và tên", "Số ngày công", "Tỷ lệ đúng giờ");
         System.out.println("------------------------------------------------------------------------------");
 
-        List<NhanVien> dsChuyenCan = DatabaseMock.dsNhanVien.stream()
-                .filter(nv -> {
-                    long tongCong = DatabaseMock.dsChamCong.stream()
-                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
-                                    && cc.getNgayLamViec().getMonthValue() == thang
-                                    && cc.getNgayLamViec().getYear() == nam)
-                            .count();
-                    long dungGio = DatabaseMock.dsChamCong.stream()
-                            .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
-                                    && cc.getNgayLamViec().getMonthValue() == thang
-                                    && cc.getNgayLamViec().getYear() == nam
-                                    && cc.getTrangThaiCong() == TrangThaiCong.DUNG_GIO)
-                            .count();
-                    return tongCong > 0 && tongCong == dungGio;
-                })
+        List<NhanVien> dsChuyenCan = nhanVienDAO.getAll().stream()
+                .filter(nv -> chamCongDAO.isChuyenCan100PhanTram(nv.getMaNhanVien(), thang, nam))
                 .collect(Collectors.toList());
 
         if (dsChuyenCan.isEmpty()) {
@@ -338,11 +297,7 @@ public class VanHanhService {
         }
 
         dsChuyenCan.forEach(nv -> {
-            long tongCong = DatabaseMock.dsChamCong.stream()
-                    .filter(cc -> cc.getMaNhanVien() == nv.getMaNhanVien()
-                            && cc.getNgayLamViec().getMonthValue() == thang
-                            && cc.getNgayLamViec().getYear() == nam)
-                    .count();
+            long tongCong = chamCongDAO.getByNhanVienVaThang(nv.getMaNhanVien(), thang, nam).size();
             System.out.printf("%-8d %-25s %-18s %s%n",
                     nv.getMaNhanVien(),
                     nv.HoTenNV(),
@@ -360,8 +315,8 @@ public class VanHanhService {
         System.out.println("==============================================================================");
 
         Arrays.stream(LoaiHopDong.values()).forEach(lhd -> {
-            List<HopDong> dsHDTheoLoai = DatabaseMock.dsHopDong.stream()
-                    .filter(hd -> hd.getLoaiHopDong() == lhd && hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN)
+            List<HopDong> dsHDTheoLoai = hopDongDAO.getByLoai(lhd).stream()
+                    .filter(hd -> hd.getTrangThai() != TrangThaiHopDong.DA_HET_HAN)
                     .collect(Collectors.toList());
 
             System.out.printf("%n>> LOẠI HỢP ĐỒNG: %s (%d nhân viên)%n", lhd, dsHDTheoLoai.size());
@@ -388,10 +343,7 @@ public class VanHanhService {
         System.out.println("DANH SÁCH ĐIỀU KHOẢN PHÁP LÝ (BẢO MẬT & KỶ LUẬT)");
         System.out.println("==============================================================================");
 
-        List<DieuKhoanHopDong> dsDKPhapLy = DatabaseMock.dsDieuKhoanHopDong.stream()
-                .filter(dk -> dk.getLoaiDieuKhoan() != null &&
-                        (dk.getLoaiDieuKhoan().equalsIgnoreCase("Bao mat") || dk.getLoaiDieuKhoan().equalsIgnoreCase("Ky luat")))
-                .collect(Collectors.toList());
+        List<DieuKhoanHopDong> dsDKPhapLy = dieuKhoanDAO.getByLoaiDieuKhoan("Bao mat", "Ky luat");
 
         if (dsDKPhapLy.isEmpty()) {
             System.out.println("-> Không tìm thấy điều khoản bảo mật hoặc kỷ luật nào.");

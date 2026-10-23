@@ -1,22 +1,35 @@
 package com.hrmis.services;
 
-import com.hrmis.data.DatabaseMock;
+import com.hrmis.dao.*;
 import com.hrmis.enums.*;
 import com.hrmis.models.*;
 
-import java.text.NumberFormat;
 import java.text.Normalizer;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TaiChinhService {
 
+    // Khai báo các đối tượng DAO theo mô hình phân tầng
+    private final NhanVienDAO nhanVienDAO = new NhanVienDAO();
+    private final PhongBanDAO phongBanDAO = new PhongBanDAO();
+    private final ChucVuDAO chucVuDAO = new ChucVuDAO();
+    private final BangLuongDAO bangLuongDAO = new BangLuongDAO();
+    private final ChiTietBangLuongDAO chiTietBangLuongDAO = new ChiTietBangLuongDAO();
+    private final DanhGiaHieuSuatDAO danhGiaHieuSuatDAO = new DanhGiaHieuSuatDAO();
+    private final ChiTietDanhGiaDAO chiTietDanhGiaDAO = new ChiTietDanhGiaDAO();
+    private final DonXinNghiDAO donXinNghiDAO = new DonXinNghiDAO();
+    private final ChamCongDAO chamCongDAO = new ChamCongDAO();
+
     private static final NumberFormat TIEN = NumberFormat.getInstance(Locale.forLanguageTag("vi-VN"));
     private static final String LINE = "-".repeat(78);
+
     private static String tien(double v) {
         return TIEN.format(Math.round(v));
     }
+
     private static String chuanHoa(String s) {
         if (s == null) return "";
         String r = Normalizer.normalize(s, Normalizer.Form.NFD)
@@ -25,47 +38,33 @@ public class TaiChinhService {
         return r.toLowerCase();
     }
 
-    /** Model NhanVien của nhóm tách họ đệm (getHo) và tên (getTen). */
     private static String hoTen(NhanVien nv) {
         return nv.getHo() + " " + nv.getTen();
     }
 
-    private static NhanVien timNhanVien(int maNV) {
-        for (NhanVien nv : DatabaseMock.dsNhanVien) {
-            if (nv.getMaNhanVien() == maNV) return nv;
-        }
-        return null;
+    private NhanVien timNhanVien(int maNV) {
+        return nhanVienDAO.getById(maNV).orElse(null);
     }
 
-    private static String tenNV(int maNV) {
+    private String tenNV(int maNV) {
         NhanVien nv = timNhanVien(maNV);
         return nv == null ? "(không rõ #" + maNV + ")" : hoTen(nv);
     }
 
-    private static String tenPhongBan(int maPB) {
-        for (PhongBan pb : DatabaseMock.dsPhongBan) {
-            if (pb.getmaPhongBan() == maPB) return pb.gettenPhongBan();
-        }
-        return "(không rõ)";
+    private String tenPhongBan(int maPB) {
+        return phongBanDAO.getTenPhongBan(maPB);
     }
 
-    private static String tenChucVu(int maCV) {
-        for (ChucVu cv : DatabaseMock.dsChucVu) {
-            if (cv.getmaChucVu() == maCV) return cv.gettenChucVu();
-        }
-        return "(không rõ)";
+    private String tenChucVu(int maCV) {
+        return chucVuDAO.getTenChucVu(maCV);
     }
 
-    private static List<ChiTietBangLuong> chiTietCua(BangLuong bl) {
-        return DatabaseMock.dsChiTietBangLuong.stream()
-                .filter(ct -> ct.getMaBangLuong() == bl.getMaBangLuong())
-                .collect(Collectors.toList());
+    private List<ChiTietBangLuong> chiTietCua(BangLuong bl) {
+        return chiTietBangLuongDAO.getByBangLuong(bl.getMaBangLuong());
     }
 
-    private static List<BangLuong> bangLuongTheoKy(int thang, int nam) {
-        return DatabaseMock.dsBangLuong.stream()
-                .filter(bl -> bl.getKyThang() == thang && bl.getKyNam() == nam)
-                .collect(Collectors.toList());
+    private List<BangLuong> bangLuongTheoKy(int thang, int nam) {
+        return bangLuongDAO.getByKy(thang, nam);
     }
 
     private static void tieuDe(String s) {
@@ -83,18 +82,16 @@ public class TaiChinhService {
         return false;
     }
 
- 
-    // CÂU 1: In phiếu lương cá nhân (Payslip)
-    
+    // =========================================================================
+    // CÂU 21: In phiếu lương cá nhân (Payslip)
+    // =========================================================================
     public void inPhieuLuong(int maNV, int thang, int nam) {
         NhanVien nv = timNhanVien(maNV);
         if (nv == null) {
             System.out.println("Không tìm thấy nhân viên có mã " + maNV);
             return;
         }
-        BangLuong bl = DatabaseMock.dsBangLuong.stream()
-                .filter(b -> b.getMaNhanVien() == maNV && b.getKyThang() == thang && b.getKyNam() == nam)
-                .findFirst().orElse(null);
+        BangLuong bl = bangLuongDAO.getByNhanVienVaKy(maNV, thang, nam).orElse(null);
         if (bl == null) {
             System.out.printf("Nhân viên %s chưa có bảng lương kỳ %02d/%d.%n", hoTen(nv), thang, nam);
             return;
@@ -144,7 +141,6 @@ public class TaiChinhService {
         System.out.printf("Trạng thái chi trả: %s%s%n", bl.getTrangThaiChiTra(),
                 bl.getNgayChiTra() == null ? "" : " (ngày " + bl.getNgayChiTra() + ")");
 
-        // Cảnh báo nếu chi tiết không khớp với tổng đã lưu
         if (!ct.isEmpty()) {
             double cong = ct.stream().filter(c -> c.getLoaiKhoanMuc() == LoaiKhoanMuc.CONG)
                     .mapToDouble(ChiTietBangLuong::getSoTien).sum();
@@ -156,9 +152,9 @@ public class TaiChinhService {
         }
     }
 
-   
-    // CÂU 2: Bảng tổng hợp chi phí lương tháng
-   
+    // =========================================================================
+    // CÂU 22: Bảng tổng hợp chi phí lương tháng
+    // =========================================================================
     public void bangTongHopLuongThang(int thang, int nam) {
         tieuDe(String.format("BẢNG TỔNG HỢP LƯƠNG THÁNG %02d/%d", thang, nam));
         List<BangLuong> ds = bangLuongTheoKy(thang, nam);
@@ -179,9 +175,9 @@ public class TaiChinhService {
                 tien(tThuNhap), tien(tKhauTru), tien(tThucLanh));
     }
 
-   
-    // CÂU 3: Thống kê quỹ lương theo phòng ban
-   
+    // =========================================================================
+    // CÂU 23: Thống kê quỹ lương theo phòng ban
+    // =========================================================================
     public void quyLuongTheoPhongBan(int thang, int nam) {
         tieuDe(String.format("QUỸ LƯƠNG THỰC LÃNH THEO PHÒNG BAN - THÁNG %02d/%d", thang, nam));
         List<BangLuong> ds = bangLuongTheoKy(thang, nam);
@@ -189,7 +185,7 @@ public class TaiChinhService {
 
         Map<Integer, Double> quy = new LinkedHashMap<>();
         Map<Integer, Integer> soNV = new HashMap<>();
-        for (PhongBan pb : DatabaseMock.dsPhongBan) quy.put(pb.getmaPhongBan(), 0.0);
+        for (PhongBan pb : phongBanDAO.getAll()) quy.put(pb.getmaPhongBan(), 0.0);
 
         for (BangLuong bl : ds) {
             NhanVien nv = timNhanVien(bl.getMaNhanVien());
@@ -210,17 +206,13 @@ public class TaiChinhService {
         System.out.printf("%-31s %10s %22s%n", "TỔNG CÔNG TY", "", tien(tong));
     }
 
-   
-    // CÂU 4: Top 3 thu nhập thực lãnh cao nhất
-    
+    // =========================================================================
+    // CÂU 24: Top 3 thu nhập thực lãnh cao nhất
+    // =========================================================================
     public void topThuNhapCaoNhat(int thang, int nam) {
         tieuDe(String.format("TOP 3 THU NHẬP THỰC LÃNH CAO NHẤT - THÁNG %02d/%d", thang, nam));
-        List<BangLuong> ds = bangLuongTheoKy(thang, nam);
-        if (khongCoDuLieu(ds, "Chưa có bảng lương nào trong kỳ này.")) return;
-
-        List<BangLuong> top = ds.stream()
-                .sorted(Comparator.comparingDouble(BangLuong::getThucLanh).reversed())
-                .limit(3).collect(Collectors.toList());
+        List<BangLuong> top = bangLuongDAO.getTopThuNhap(thang, nam, 3);
+        if (khongCoDuLieu(top, "Chưa có bảng lương nào trong kỳ này.")) return;
 
         System.out.printf("%-5s %-6s %-22s %-24s %15s%n", "Hạng", "Mã NV", "Tên NV", "Chức vụ", "Thực lãnh");
         System.out.println(LINE);
@@ -232,9 +224,9 @@ public class TaiChinhService {
         }
     }
 
-   
-    // CÂU 5: Chi tiết khấu trừ bảo hiểm (BHXH, BHYT, BHTN)
-   
+    // =========================================================================
+    // CÂU 25: Chi tiết khấu trừ bảo hiểm (BHXH, BHYT, BHTN)
+    // =========================================================================
     public void thongKeBaoHiem(int thang, int nam) {
         tieuDe(String.format("THỐNG KÊ BẢO HIỂM BẮT BUỘC ĐÃ TRÍCH - THÁNG %02d/%d", thang, nam));
         List<BangLuong> ds = bangLuongTheoKy(thang, nam);
@@ -251,7 +243,7 @@ public class TaiChinhService {
                 if (!ten.contains("bao hiem")) continue;
                 if (ten.contains("that nghiep")) tn += c.getSoTien();
                 else if (ten.contains("y te")) yt += c.getSoTien();
-                else xh += c.getSoTien(); // "bao hiem xa hoi" (kể cả dòng gộp 10.5%)
+                else xh += c.getSoTien();
             }
             System.out.printf("%-6d %-22s %12s %12s %12s %13s%n", bl.getMaNhanVien(), tenNV(bl.getMaNhanVien()),
                     tien(xh), tien(yt), tien(tn), tien(xh + yt + tn));
@@ -261,9 +253,9 @@ public class TaiChinhService {
         System.out.printf("%-29s %12s %12s %12s %13s%n", "TỔNG CỘNG", tien(sXH), tien(sYT), tien(sTN), tien(sXH + sYT + sTN));
     }
 
-   
-    // CÂU 6: Báo cáo thưởng và phụ cấp
-   
+    // =========================================================================
+    // CÂU 26: Báo cáo thưởng và phụ cấp
+    // =========================================================================
     public void baoCaoThuongPhuCap(int thang, int nam) {
         tieuDe(String.format("BÁO CÁO THƯỞNG & PHỤ CẤP - THÁNG %02d/%d", thang, nam));
         List<BangLuong> ds = bangLuongTheoKy(thang, nam);
@@ -292,12 +284,11 @@ public class TaiChinhService {
         System.out.printf("TỔNG %d khoản: %s VND%n", dem, tien(tong));
     }
 
-   
-    // CÂU 7: Bản in phiếu đánh giá KPI chi tiết
-    
+    // =========================================================================
+    // CÂU 27: Bản in phiếu đánh giá KPI chi tiết
+    // =========================================================================
     public void inPhieuKPI(int maDanhGia) {
-        DanhGiaHieuSuat dg = DatabaseMock.dsDanhGiaHieuSuat.stream()
-                .filter(d -> d.getMaDanhGia() == maDanhGia).findFirst().orElse(null);
+        DanhGiaHieuSuat dg = danhGiaHieuSuatDAO.getById(maDanhGia).orElse(null);
         if (dg == null) {
             System.out.println("Không tìm thấy phiếu đánh giá có mã " + maDanhGia);
             return;
@@ -315,8 +306,7 @@ public class TaiChinhService {
         System.out.printf("Xếp loại               : %s%n", dg.getXepLoai());
         System.out.println(LINE);
 
-        List<ChiTietDanhGia> ct = DatabaseMock.dsChiTietDanhGia.stream()
-                .filter(c -> c.getMaDanhGia() == maDanhGia).collect(Collectors.toList());
+        List<ChiTietDanhGia> ct = chiTietDanhGiaDAO.getByDanhGia(maDanhGia);
         if (khongCoDuLieu(ct, "(Phiếu này chưa có chi tiết từng tiêu chí)")) return;
 
         System.out.printf("%-30s %9s %8s  %s%n", "Tiêu chí", "Trọng số", "Điểm", "Nhận xét");
@@ -327,14 +317,14 @@ public class TaiChinhService {
         }
     }
 
-   
-    // CÂU 8: Xếp hạng hiệu suất nhân viên theo xếp loại trong một kỳ
-   
+    // =========================================================================
+    // CÂU 28: Xếp hạng hiệu suất nhân viên theo xếp loại trong một kỳ
+    // =========================================================================
     public void xepHangHieuSuat(String kyDanhGia, int nam) {
         tieuDe(String.format("XẾP HẠNG HIỆU SUẤT - %s / %d", kyDanhGia, nam));
         String kyChuan = chuanHoa(kyDanhGia).trim();
-        List<DanhGiaHieuSuat> ds = DatabaseMock.dsDanhGiaHieuSuat.stream()
-                .filter(d -> d.getNam() == nam && chuanHoa(d.getKyDanhGia()).trim().equals(kyChuan))
+        List<DanhGiaHieuSuat> ds = danhGiaHieuSuatDAO.getByNam(nam).stream()
+                .filter(d -> chuanHoa(d.getKyDanhGia()).trim().equals(kyChuan))
                 .collect(Collectors.toList());
         if (khongCoDuLieu(ds, "Chưa có đánh giá nào trong kỳ này.")) return;
 
@@ -359,11 +349,9 @@ public class TaiChinhService {
         return nv == null ? "" : tenChucVu(nv.getMaChucVu());
     }
 
-   
-    // CÂU 9: Nhân sự xuất sắc + không nghỉ ngày nào trong quý
-    // Quy ước: "không nghỉ ngày nào" = không có đơn nghỉ ĐÃ DUYỆT giao với quý
-    // và không có bản ghi chấm công VẮNG MẶT (có phép / không phép) trong quý.
-   
+    // =========================================================================
+    // CÂU 29: Nhân sự xuất sắc + không nghỉ ngày nào trong quý
+    // =========================================================================
     public void timNhanSuXuatSac(int quy, int nam) {
         tieuDe(String.format("NHÂN SỰ XUẤT SẮC & KHÔNG NGHỈ NGÀY NÀO - QUÝ %d/%d", quy, nam));
         if (quy < 1 || quy > 4) {
@@ -374,18 +362,18 @@ public class TaiChinhService {
         LocalDate cuoi = dau.plusMonths(3).minusDays(1);
         String kyChuan = chuanHoa("Quy " + quy);
 
-        List<DanhGiaHieuSuat> xuatSac = DatabaseMock.dsDanhGiaHieuSuat.stream()
-                .filter(d -> d.getNam() == nam && chuanHoa(d.getKyDanhGia()).trim().equals(kyChuan)
+        List<DanhGiaHieuSuat> xuatSac = danhGiaHieuSuatDAO.getByNam(nam).stream()
+                .filter(d -> chuanHoa(d.getKyDanhGia()).trim().equals(kyChuan)
                         && d.getXepLoai() == XepLoai.XUAT_SAC)
                 .collect(Collectors.toList());
 
         int dem = 0;
         for (DanhGiaHieuSuat d : xuatSac) {
             int maNV = d.getMaNhanVien();
-            boolean coNghiPhep = DatabaseMock.dsDonXinNghi.stream().anyMatch(n ->
-                    n.getMaNhanVien() == maNV && n.getTrangThaiDuyet() == TrangThaiDuyet.DA_DUYET
+            boolean coNghiPhep = donXinNghiDAO.getByNhanVien(maNV).stream().anyMatch(n ->
+                    n.getTrangThaiDuyet() == TrangThaiDuyet.DA_DUYET
                             && !n.getNgayBatDau().isAfter(cuoi) && !n.getNgayKetThuc().isBefore(dau));
-            boolean coVang = DatabaseMock.dsChamCong.stream().anyMatch(c ->
+            boolean coVang = chamCongDAO.getAll().stream().anyMatch(c ->
                     c.getMaNhanVien() == maNV && !c.getNgayLamViec().isBefore(dau) && !c.getNgayLamViec().isAfter(cuoi)
                             && (c.getTrangThaiCong() == TrangThaiCong.VANG_MAT_CO_PHEP
                             || c.getTrangThaiCong() == TrangThaiCong.VANG_MAT_KHONG_PHEP));
@@ -401,16 +389,16 @@ public class TaiChinhService {
         else System.out.println("\nTìm thấy " + dem + " nhân viên.");
     }
 
-    
-    // CÂU 10: Thu nhập trung bình theo từng chức vụ
-    // (trung bình của "tổng thu nhập" trên toàn bộ các bảng lương đã có)
-  
+    // =========================================================================
+    // CÂU 30: Thu nhập trung bình theo từng chức vụ
+    // =========================================================================
     public void thuNhapTrungBinhTheoChucVu() {
         tieuDe("THU NHẬP TRUNG BÌNH THEO CHỨC VỤ (toàn bộ bảng lương)");
-        if (khongCoDuLieu(DatabaseMock.dsBangLuong, "Chưa có bảng lương nào.")) return;
+        List<BangLuong> tatCaBangLuong = bangLuongDAO.getAll();
+        if (khongCoDuLieu(tatCaBangLuong, "Chưa có bảng lương nào.")) return;
 
         Map<Integer, List<BangLuong>> theoChucVu = new LinkedHashMap<>();
-        for (BangLuong bl : DatabaseMock.dsBangLuong) {
+        for (BangLuong bl : tatCaBangLuong) {
             NhanVien nv = timNhanVien(bl.getMaNhanVien());
             if (nv == null) continue;
             theoChucVu.computeIfAbsent(nv.getMaChucVu(), k -> new ArrayList<>()).add(bl);
