@@ -14,26 +14,31 @@ public class Main {
 
     private static void printMenu() {
         System.out.println("\n===================== MENU TRUY VẤN HRM =====================");
-        System.out.println("1. In chi tiết hợp đồng");
-        System.out.println("2. Cảnh báo hợp đồng sắp hết hạn");
-        System.out.println("3. Bảng chấm công cá nhân");
-        System.out.println("4. Báo cáo đi trễ");
-        System.out.println("5. Báo cáo làm thêm giờ");
-        System.out.println("6. Theo dõi đơn nghỉ phép");
-        System.out.println("7. Lịch sử nghỉ của nhân viên");
-        System.out.println("8. Thống kê chuyên cần");
-        System.out.println("9. Thống kê hợp đồng");
-        System.out.println("10. Lọc điều khoản pháp lý");
-        System.out.println("11. Danh sách nhân viên");
-        System.out.println("12. Danh sách phòng ban");
-        System.out.println("13. Tra cứu nhân viên theo phòng ban");
-        System.out.println("14. Top 3 nhân viên thâm niên");
-        System.out.println("15. Danh sách cấp dưới của quản lý");
-        System.out.println("16. Chi tiết nhóm nhân viên");
-        System.out.println("17. Thống kê nhân viên đa nhiệm");
-        System.out.println("18. Thống kê nhân sự theo chức vụ");
-        System.out.println("19. Danh sách nhân viên chưa vào nhóm");
-        System.out.println("20. Tìm nhân sự theo từ khóa");
+        System.out.println("--- PHÂN HỆ 1: NHÂN SỰ & TỔ CHỨC (LĨNH: CÂU 1 -> 10) ---");
+        System.out.println("1. Danh sách nhân viên");
+        System.out.println("2. Danh sách phòng ban");
+        System.out.println("3. Tra cứu nhân viên theo phòng ban");
+        System.out.println("4. Top 3 nhân viên thâm niên");
+        System.out.println("5. Danh sách cấp dưới của quản lý");
+        System.out.println("6. Chi tiết nhóm nhân viên");
+        System.out.println("7. Thống kê nhân viên đa nhiệm");
+        System.out.println("8. Thống kê nhân sự theo chức vụ");
+        System.out.println("9. Danh sách nhân viên chưa vào nhóm");
+        System.out.println("10. Tìm nhân sự theo từ khóa");
+
+        System.out.println("--- PHÂN HỆ 2: VẬN HÀNH & CHẤM CÔNG (DƯƠNG: CÂU 11 -> 20) ---");
+        System.out.println("11. In chi tiết hợp đồng");
+        System.out.println("12. Cảnh báo hợp đồng sắp hết hạn");
+        System.out.println("13. Bảng chấm công cá nhân");
+        System.out.println("14. Báo cáo đi trễ");
+        System.out.println("15. Báo cáo làm thêm giờ");
+        System.out.println("16. Theo dõi đơn nghỉ phép");
+        System.out.println("17. Lịch sử nghỉ của nhân viên");
+        System.out.println("18. Thống kê chuyên cần");
+        System.out.println("19. Thống kê hợp đồng");
+        System.out.println("20. Lọc điều khoản pháp lý");
+
+        System.out.println("--- PHÂN HỆ 3: TÀI CHÍNH & HIỆU SUẤT (HẠO: CÂU 21 -> 30) ---");
         System.out.println("21. In phiếu lương cá nhân");
         System.out.println("22. Bảng tổng hợp lương tháng");
         System.out.println("23. Quỹ lương theo phòng ban");
@@ -45,73 +50,78 @@ public class Main {
         System.out.println("29. Tìm nhân sự xuất sắc");
         System.out.println("30. Thu nhập trung bình theo chức vụ");
         System.out.println("0. Thoát chương trình");
-        System.out.println("===========================================================");
+        System.out.println("=============================================================");
     }
 
     private static void executeChoice(int choice) {
         System.out.println("\n=== ĐANG THỰC THI: CÂU " + choice + " ===");
 
         switch (choice) {
+            // LĨNH (Câu 1 -> 10: Quản lý nhân sự, tổ chức phòng ban)
             case 1:
-                VAN_HANH_SERVICE.inHopDongChiTiet(3);
-                break;
-            case 2:
-                VAN_HANH_SERVICE.canhBaoHopDongSapHetHan(LocalDate.now());
-                break;
-            case 3:
-                VAN_HANH_SERVICE.inBangChamCongCaNhan(2, 3, 2024);
-                break;
-            case 4:
-                VAN_HANH_SERVICE.baocaoDiTre(3, 2024);
-                break;
-            case 5:
-                VAN_HANH_SERVICE.baocaoOT(3, 2024);
-                break;
-            case 6:
-                VAN_HANH_SERVICE.theoDoiDonNghiPhep();
-                break;
-            case 7:
-                VAN_HANH_SERVICE.lsNghi(2);
-                break;
-            case 8:
-                VAN_HANH_SERVICE.thongkeChuyenCan(3, 2024);
-                break;
-            case 9:
-                VAN_HANH_SERVICE.thongkeHopDong();
-                break;
-            case 10:
-                VAN_HANH_SERVICE.locDieuKhoanPhapLy();
-                break;
-            case 11:
                 NHAN_SU_SERVICE.DanhSachNhanVien();
                 break;
-            case 12:
+            case 2:
                 NHAN_SU_SERVICE.danhSachPhongBan();
                 break;
-            case 13:
+            case 3:
                 NHAN_SU_SERVICE.traCuuNhanVienTheoPhongBan("Phong CNTT");
                 break;
-            case 14:
+            case 4:
                 NHAN_SU_SERVICE.top3NhanVienThamNien();
                 break;
-            case 15:
+            case 5:
                 NHAN_SU_SERVICE.danhSachCapDuoiCuaQuanLy(1);
                 break;
-            case 16:
+            case 6:
                 NHAN_SU_SERVICE.chiTietNhomNhanVien(1);
                 break;
-            case 17:
+            case 7:
                 NHAN_SU_SERVICE.thongKeNhanVienDaNhiemNhieuNhom();
                 break;
-            case 18:
+            case 8:
                 NHAN_SU_SERVICE.thongKeNhanSuTheoChucVu();
                 break;
-            case 19:
+            case 9:
                 NHAN_SU_SERVICE.danhSachNhanVienChuaVaoNhom();
                 break;
-            case 20:
+            case 10:
                 NHAN_SU_SERVICE.timNhanSuTheoTuKhoa("linh");
                 break;
+
+            // DƯƠNG (Câu 11 -> 20: Vận hành, hợp đồng, chấm công, nghỉ phép)
+            case 11:
+                VAN_HANH_SERVICE.inHopDongChiTiet(3);
+                break;
+            case 12:
+                VAN_HANH_SERVICE.canhBaoHopDongSapHetHan(LocalDate.now());
+                break;
+            case 13:
+                VAN_HANH_SERVICE.inBangChamCongCaNhan(2, 3, 2024);
+                break;
+            case 14:
+                VAN_HANH_SERVICE.baocaoDiTre(3, 2024);
+                break;
+            case 15:
+                VAN_HANH_SERVICE.baocaoOT(3, 2024);
+                break;
+            case 16:
+                VAN_HANH_SERVICE.theoDoiDonNghiPhep();
+                break;
+            case 17:
+                VAN_HANH_SERVICE.lsNghi(2);
+                break;
+            case 18:
+                VAN_HANH_SERVICE.thongkeChuyenCan(3, 2024);
+                break;
+            case 19:
+                VAN_HANH_SERVICE.thongkeHopDong();
+                break;
+            case 20:
+                VAN_HANH_SERVICE.locDieuKhoanPhapLy();
+                break;
+
+            // HẠO (Câu 21 -> 30: Tài chính tiền lương, khấu trừ, KPI)
             case 21:
                 TAI_CHINH_SERVICE.inPhieuLuong(2, 3, 2024);
                 break;

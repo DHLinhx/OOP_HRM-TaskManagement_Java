@@ -37,7 +37,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 11: Danh sách toàn bộ nhân viên
+    // Câu 1: Danh sách toàn bộ nhân viên
     //=============================================
     public void DanhSachNhanVien() {
         String formatHeader = "%-8s %-22s %-12s %-22s %-28s %-18s%n";
@@ -63,7 +63,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 12: Cơ cấu tổ chức phòng ban
+    // Câu 2: Cơ cấu tổ chức phòng ban
     //=============================================
     public void danhSachPhongBan() {
         System.out.println("\n=== Cơ cấu tổ chức phòng ban ===");
@@ -85,7 +85,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 13: Tra cứu nhân viên theo phòng ban
+    // Câu 3: Tra cứu nhân viên theo phòng ban
     //=============================================
     public void traCuuNhanVienTheoPhongBan(String maHoacTenPhongBan) {
         if (maHoacTenPhongBan == null || maHoacTenPhongBan.trim().isEmpty()) {
@@ -115,7 +115,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 14: Top 3 nhân viên thâm niên
+    // Câu 4: Top 3 nhân viên thâm niên
     //=============================================
     public void top3NhanVienThamNien() {
         System.out.println("\n=== Top 3 nhan vien co ngay vao lam som nhat ===");
@@ -127,7 +127,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 15: Cây phân cấp quản lý
+    // Câu 5: Cây phân cấp quản lý
     //=============================================
     public void danhSachCapDuoiCuaQuanLy(int maNhanVienQuanLy) {
         System.out.println("\n=== Danh sach cap duoi cua quan ly " + maNhanVienQuanLy + " ===");
@@ -146,7 +146,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 16: Chi tiết một nhóm làm việc
+    // Câu 6: Chi tiết một nhóm làm việc
     //=============================================
     public void chiTietNhomNhanVien(int maNhom) {
         System.out.println("\n=== Chi tiet nhom lam viec ===");
@@ -178,7 +178,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 17: Thống kê nhân sự đa nhiệm
+    // Câu 7: Thống kê nhân sự đa nhiệm
     //=============================================
     public void thongKeNhanVienDaNhiemNhieuNhom() {
         System.out.println("\n=== Danh sach nhan vien tham gia tu 2 nhom tro len ===");
@@ -205,7 +205,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 18: Phân bổ nhân sự theo chức danh
+    // Câu 8: Phân bổ nhân sự theo chức danh
     //=============================================
     public void thongKeNhanSuTheoChucVu() {
         System.out.println("\n=== Thong ke nhan su theo chuc vu ===");
@@ -219,7 +219,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 19: Nhân viên chưa vào nhóm
+    // Câu 9: Nhân viên chưa vào nhóm
     //=============================================
     public void danhSachNhanVienChuaVaoNhom() {
         System.out.println("\n=== Danh sach nhan vien chua tham gia nhom nao ===");
@@ -240,7 +240,7 @@ public class NhanSuService {
     }
 
     //=============================================
-    // Câu 20: Tìm kiếm nhân sự đa tiêu chí
+    // Câu 10: Tìm kiếm nhân sự đa tiêu chí
     //=============================================
     public void timNhanSuTheoTuKhoa(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {

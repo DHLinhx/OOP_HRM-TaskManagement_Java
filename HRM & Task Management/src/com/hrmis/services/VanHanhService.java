@@ -43,7 +43,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 1: Bản in hợp đồng chi tiết
+    // CÂU 11: Bản in hợp đồng chi tiết
     // =========================================================================
     public void inHopDongChiTiet(int maHopDong) {
         hopDongDAO.getById(maHopDong)
@@ -77,7 +77,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 2: Cảnh báo hợp đồng sắp hết hạn trong vòng 30 ngày
+    // CÂU 12: Cảnh báo hợp đồng sắp hết hạn trong vòng 30 ngày
     // =========================================================================
     public void canhBaoHopDongSapHetHan(LocalDate mocThoiGian) {
         System.out.println("==============================================================================");
@@ -101,7 +101,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 3: Bảng chấm công cá nhân theo tháng/năm
+    // CÂU 13: Bảng chấm công cá nhân theo tháng/năm
     // =========================================================================
     public void inBangChamCongCaNhan(int maNhanVien, int thang, int nam) {
         String hoTen = getTenNhanVien(maNhanVien);
@@ -136,7 +136,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 4: Báo cáo đi trễ trong tháng (sắp xếp giảm dần theo số lần vi phạm)
+    // CÂU 14: Báo cáo đi trễ trong tháng (sắp xếp giảm dần theo số lần vi phạm)
     // =========================================================================
     public static class ThongKeDiTre {
         public int maNV;
@@ -176,7 +176,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 5: Báo cáo nhân viên làm thêm giờ (OT) trong tháng
+    // CÂU 15: Báo cáo nhân viên làm thêm giờ (OT) trong tháng
     // =========================================================================
     public static class ThongKeOT {
         public int maNV;
@@ -216,7 +216,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 6: Bảng theo dõi đơn nghỉ phép đang CHỜ DUYỆT
+    // CÂU 16: Bảng theo dõi đơn nghỉ phép đang CHỜ DUYỆT
     // =========================================================================
     public void theoDoiDonNghiPhep() {
         System.out.println("==============================================================================");
@@ -244,7 +244,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 7: Lịch sử nghỉ phép của một nhân viên
+    // CÂU 17: Lịch sử nghỉ phép của một nhân viên
     // =========================================================================
     public void lsNghi(int maNV) {
         boolean timThayNV = nhanVienDAO.getById(maNV).isPresent();
@@ -278,7 +278,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 8: Thống kê nhân viên đạt chuyên cần 100% trong tháng
+    // CÂU 18: Thống kê nhân viên đạt chuyên cần 100% trong tháng
     // =========================================================================
     public void thongkeChuyenCan(int thang, int nam) {
         System.out.println("==============================================================================");
@@ -307,7 +307,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 9: Thống kê số lượng nhân viên theo từng loại hợp đồng lao động
+    // CÂU 19: Thống kê số lượng nhân viên theo từng loại hợp đồng lao động
     // =========================================================================
     public void thongkeHopDong() {
         System.out.println("==============================================================================");
@@ -336,7 +336,7 @@ public class VanHanhService {
     }
 
     // =========================================================================
-    // CÂU 10: Lọc các điều khoản pháp lý (Bảo mật hoặc Kỷ luật) trên hệ thống
+    // CÂU 20: Lọc các điều khoản pháp lý (Bảo mật hoặc Kỷ luật) trên hệ thống
     // =========================================================================
     public void locDieuKhoanPhapLy() {
         System.out.println("==============================================================================");
