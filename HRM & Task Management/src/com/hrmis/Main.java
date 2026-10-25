@@ -41,6 +41,26 @@ public class Main {
         scanner.nextLine();
     }
 
+    private static int promptInt(Scanner scanner, String message, int defaultValue) {
+        System.out.printf("👉 %s [Mặc định: %d]: ", message, defaultValue);
+        String line = scanner.nextLine().trim();
+        if (line.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            System.out.printf("   (Nhập không hợp lệ, tự động áp dụng mặc định: %d)%n", defaultValue);
+            return defaultValue;
+        }
+    }
+
+    private static String promptString(Scanner scanner, String message, String defaultValue) {
+        System.out.printf("👉 %s [Mặc định: \"%s\"]: ", message, defaultValue);
+        String line = scanner.nextLine().trim();
+        return line.isEmpty() ? defaultValue : line;
+    }
+
     private static void executeChoice(int choice, Scanner scanner) {
         System.out.println("\n=== ĐANG THỰC THI: CÂU " + choice + " ===");
 
@@ -53,18 +73,26 @@ public class Main {
                 NHAN_SU_SERVICE.danhSachPhongBan();
                 break;
             case 3:
-                System.out.print("Nhập mã hoặc tên phòng ban cần tra cứu (VD: Phong CNTT / 1): ");
-                String phongBanInput = scanner.nextLine().trim();
-                NHAN_SU_SERVICE.traCuuNhanVienTheoPhongBan(phongBanInput);
+                System.out.println("💡 Gợi ý phòng ban: [1] Phong CNTT | [2] Phong Kinh doanh | [3] Phong Nhan su");
+                String phongBan = promptString(scanner, "Nhập mã hoặc tên phòng ban", "Phong CNTT");
+                NHAN_SU_SERVICE.traCuuNhanVienTheoPhongBan(phongBan);
                 break;
             case 4:
                 NHAN_SU_SERVICE.top3NhanVienThamNien();
                 break;
             case 5:
-                NHAN_SU_SERVICE.danhSachCapDuoiCuaQuanLy(1);
+                System.out.println("💡 Gợi ý các quản lý hiện có trong công ty:");
+                System.out.println("   • [Mã 1] Nguyen Van An   - GĐ Kỹ thuật (Quản lý 4 cấp dưới: 2, 3, 4, 5)");
+                System.out.println("   • [Mã 2] Tran Thi Binh   - Senior Dev  (Quản lý 2 cấp dưới: 6, 7)");
+                System.out.println("   • [Mã 3] Le Hoang Cuong  - TP Kinh doanh (Quản lý 2 cấp dưới: 8, 10)");
+                System.out.println("   • [Mã 5] Vu Thi Hoa      - TP Nhân sự (Quản lý 1 cấp dưới: 9)");
+                int maQL = promptInt(scanner, "Nhập mã người quản lý", 1);
+                NHAN_SU_SERVICE.danhSachCapDuoiCuaQuanLy(maQL);
                 break;
             case 6:
-                NHAN_SU_SERVICE.chiTietNhomNhanVien(1);
+                System.out.println("💡 Gợi ý các nhóm dự án: [Mã 1] Doi Du an ERP | [Mã 2] Nhom An toan thong tin | [Mã 3] Doi Chuyen doi so");
+                int maNhom = promptInt(scanner, "Nhập mã nhóm dự án", 1);
+                NHAN_SU_SERVICE.chiTietNhomNhanVien(maNhom);
                 break;
             case 7:
                 NHAN_SU_SERVICE.thongKeNhanVienDaNhiemNhieuNhom();
@@ -76,35 +104,47 @@ public class Main {
                 NHAN_SU_SERVICE.danhSachNhanVienChuaVaoNhom();
                 break;
             case 10:
-                System.out.print("Nhập từ khóa tìm kiếm nhân sự (họ tên, email hoặc SĐT): ");
-                String tuKhoaInput = scanner.nextLine().trim();
-                NHAN_SU_SERVICE.timNhanSuTheoTuKhoa(tuKhoaInput);
+                System.out.println("💡 Gợi ý từ khóa mẫu: \"linh\", \"an\", \"090\", \"company.com\"");
+                String tuKhoa = promptString(scanner, "Nhập từ khóa tìm kiếm (tên, email, SĐT)", "linh");
+                NHAN_SU_SERVICE.timNhanSuTheoTuKhoa(tuKhoa);
                 break;
 
             // DƯƠNG (Câu 11 -> 20: Vận hành, hợp đồng, chấm công, nghỉ phép)
             case 11:
-                VAN_HANH_SERVICE.inHopDongChiTiet(3);
+                System.out.println("💡 Gợi ý: Có 10 hợp đồng (Mã 1 -> 10). Mẫu mã 3 là Hợp đồng không xác định thời hạn của NV Cuong.");
+                int maHD = promptInt(scanner, "Nhập mã hợp đồng lao động", 3);
+                VAN_HANH_SERVICE.inHopDongChiTiet(maHD);
                 break;
             case 12:
                 VAN_HANH_SERVICE.canhBaoHopDongSapHetHan(LocalDate.now());
                 break;
             case 13:
-                VAN_HANH_SERVICE.inBangChamCongCaNhan(2, 3, 2024);
+                int nvCong = promptInt(scanner, "Nhập mã nhân viên", 2);
+                int thangCong = promptInt(scanner, "Nhập tháng", 3);
+                int namCong = promptInt(scanner, "Nhập năm", 2024);
+                VAN_HANH_SERVICE.inBangChamCongCaNhan(nvCong, thangCong, namCong);
                 break;
             case 14:
-                VAN_HANH_SERVICE.baocaoDiTre(3, 2024);
+                int thangTre = promptInt(scanner, "Nhập tháng báo cáo đi trễ", 3);
+                int namTre = promptInt(scanner, "Nhập năm", 2024);
+                VAN_HANH_SERVICE.baocaoDiTre(thangTre, namTre);
                 break;
             case 15:
-                VAN_HANH_SERVICE.baocaoOT(3, 2024);
+                int thangOT = promptInt(scanner, "Nhập tháng báo cáo làm thêm giờ (OT)", 3);
+                int namOT = promptInt(scanner, "Nhập năm", 2024);
+                VAN_HANH_SERVICE.baocaoOT(thangOT, namOT);
                 break;
             case 16:
                 VAN_HANH_SERVICE.theoDoiDonNghiPhep();
                 break;
             case 17:
-                VAN_HANH_SERVICE.lsNghi(2);
+                int maNVNghi = promptInt(scanner, "Nhập mã nhân viên xem lịch sử nghỉ", 2);
+                VAN_HANH_SERVICE.lsNghi(maNVNghi);
                 break;
             case 18:
-                VAN_HANH_SERVICE.thongkeChuyenCan(3, 2024);
+                int thangCC = promptInt(scanner, "Nhập tháng thống kê chuyên cần", 3);
+                int namCC = promptInt(scanner, "Nhập năm", 2024);
+                VAN_HANH_SERVICE.thongkeChuyenCan(thangCC, namCC);
                 break;
             case 19:
                 VAN_HANH_SERVICE.thongkeHopDong();
@@ -115,31 +155,50 @@ public class Main {
 
             // HẠO (Câu 21 -> 30: Tài chính tiền lương, khấu trừ, KPI)
             case 21:
-                TAI_CHINH_SERVICE.inPhieuLuong(2, 3, 2024);
+                int nvLuong = promptInt(scanner, "Nhập mã nhân viên", 2);
+                int thangLuong = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namLuong = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.inPhieuLuong(nvLuong, thangLuong, namLuong);
                 break;
             case 22:
-                TAI_CHINH_SERVICE.bangTongHopLuongThang(3, 2024);
+                int thangTH = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namTH = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.bangTongHopLuongThang(thangTH, namTH);
                 break;
             case 23:
-                TAI_CHINH_SERVICE.quyLuongTheoPhongBan(3, 2024);
+                int thangQL = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namQL = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.quyLuongTheoPhongBan(thangQL, namQL);
                 break;
             case 24:
-                TAI_CHINH_SERVICE.topThuNhapCaoNhat(3, 2024);
+                int thangTop = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namTop = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.topThuNhapCaoNhat(thangTop, namTop);
                 break;
             case 25:
-                TAI_CHINH_SERVICE.thongKeBaoHiem(3, 2024);
+                int thangBH = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namBH = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.thongKeBaoHiem(thangBH, namBH);
                 break;
             case 26:
-                TAI_CHINH_SERVICE.baoCaoThuongPhuCap(3, 2024);
+                int thangPC = promptInt(scanner, "Nhập kỳ lương tháng", 3);
+                int namPC = promptInt(scanner, "Nhập kỳ lương năm", 2024);
+                TAI_CHINH_SERVICE.baoCaoThuongPhuCap(thangPC, namPC);
                 break;
             case 27:
-                TAI_CHINH_SERVICE.inPhieuKPI(1);
+                System.out.println("💡 Gợi ý: Có 6 phiếu KPI (Mã 1 -> 6). Mẫu mã 1 là KPI Quý 1/2024 của NV Tran Thi Binh.");
+                int maKPI = promptInt(scanner, "Nhập mã phiếu đánh giá KPI", 1);
+                TAI_CHINH_SERVICE.inPhieuKPI(maKPI);
                 break;
             case 28:
-                TAI_CHINH_SERVICE.xepHangHieuSuat("Quy 1", 2024);
+                String kyXH = promptString(scanner, "Nhập kỳ đánh giá (VD: Quy 1)", "Quy 1");
+                int namXH = promptInt(scanner, "Nhập năm đánh giá", 2024);
+                TAI_CHINH_SERVICE.xepHangHieuSuat(kyXH, namXH);
                 break;
             case 29:
-                TAI_CHINH_SERVICE.timNhanSuXuatSac(1, 2024);
+                int quyXS = promptInt(scanner, "Nhập quý (1 - 4)", 1);
+                int namXS = promptInt(scanner, "Nhập năm", 2024);
+                TAI_CHINH_SERVICE.timNhanSuXuatSac(quyXS, namXS);
                 break;
             case 30:
                 TAI_CHINH_SERVICE.thuNhapTrungBinhTheoChucVu();
