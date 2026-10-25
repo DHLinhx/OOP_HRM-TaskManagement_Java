@@ -53,7 +53,7 @@ public class Main {
         System.out.println("=============================================================");
     }
 
-    private static void executeChoice(int choice) {
+    private static void executeChoice(int choice, Scanner scanner) {
         System.out.println("\n=== ĐANG THỰC THI: CÂU " + choice + " ===");
 
         switch (choice) {
@@ -65,7 +65,9 @@ public class Main {
                 NHAN_SU_SERVICE.danhSachPhongBan();
                 break;
             case 3:
-                NHAN_SU_SERVICE.traCuuNhanVienTheoPhongBan("Phong CNTT");
+                System.out.print("Nhập mã hoặc tên phòng ban cần tra cứu (VD: Phong CNTT / 1): ");
+                String phongBanInput = scanner.nextLine().trim();
+                NHAN_SU_SERVICE.traCuuNhanVienTheoPhongBan(phongBanInput);
                 break;
             case 4:
                 NHAN_SU_SERVICE.top3NhanVienThamNien();
@@ -86,7 +88,9 @@ public class Main {
                 NHAN_SU_SERVICE.danhSachNhanVienChuaVaoNhom();
                 break;
             case 10:
-                NHAN_SU_SERVICE.timNhanSuTheoTuKhoa("linh");
+                System.out.print("Nhập từ khóa tìm kiếm nhân sự (họ tên, email hoặc SĐT): ");
+                String tuKhoaInput = scanner.nextLine().trim();
+                NHAN_SU_SERVICE.timNhanSuTheoTuKhoa(tuKhoaInput);
                 break;
 
             // DƯƠNG (Câu 11 -> 20: Vận hành, hợp đồng, chấm công, nghỉ phép)
@@ -178,7 +182,7 @@ public class Main {
                     break;
                 }
 
-                executeChoice(choice);
+                executeChoice(choice, scanner);
             } catch (NumberFormatException e) {
                 System.out.println("Lựa chọn không hợp lệ. Vui lòng nhập số từ 0 đến 30.");
             }
