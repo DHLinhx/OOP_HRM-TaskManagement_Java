@@ -4,7 +4,7 @@
 
 ---
 
-## 📌 Mục lục
+##  Mục lục
 - [Giới thiệu](#-giới-thiệu)
 - [Tính năng chính](#-tính-năng-chính)
 - [Áp dụng lập trình hướng đối tượng (OOP)](#-áp-dụng-lập-trình-hướng-đối-tượng-oop)
@@ -15,7 +15,7 @@
 
 ---
 
-## 📖 Giới thiệu
+##  Giới thiệu
 
 Trong các doanh nghiệp hiện đại, nguồn nhân lực là tài sản cốt lõi quyết định năng lực cạnh tranh. Tuy nhiên, công tác quản trị nhân sự truyền thống thông qua sổ sách hoặc các bảng tính rời rạc (Excel) bộc lộ nhiều điểm nghẽn nghiêm trọng:
 * Dữ liệu chấm công thủ công phân tán, dễ sai sót và khó kiểm soát giờ làm việc thực tế.
@@ -26,8 +26,9 @@ Trong các doanh nghiệp hiện đại, nguồn nhân lực là tài sản cố
 **Hệ thống Quản trị Nhân sự và Công việc (HRM & Task Management System - Java Edition)** được xây dựng nhằm giải quyết triệt để các bài toán trên. Ứng dụng thiết lập cơ sở dữ liệu mô phỏng trong bộ nhớ gồm 14 thực thể và 10 danh mục Enumeration đạt dạng chuẩn 3NF/BCNF, chia thành 3 phân hệ nghiệp vụ độc lập nhưng liên kết chặt chẽ, đồng thời hiện thực hóa 30 chức năng truy vấn báo cáo chuyên sâu bằng công nghệ **Java Lambdas & Stream API (JDK 21)**.
 
 ---
+## Hướng dẫn chạy code
 
-## 🚀 Tính năng chính
+##  Tính năng chính
 
 Hệ thống cung cấp đầy đủ 30 chức năng nghiệp vụ được phân rã thành 3 phân hệ chuyên trách trong Java:
 
@@ -103,7 +104,7 @@ Hệ thống cung cấp đầy đủ 30 chức năng nghiệp vụ được phâ
 
 ---
 
-## 📐 Kiến trúc & Sơ đồ lớp (Class Diagram)
+##  Kiến trúc & Sơ đồ lớp (Class Diagram)
 
 ### 1. Kiến trúc phân tầng Java
 ```
@@ -235,7 +236,7 @@ classDiagram
 
 ---
 
-## 💻 Yêu cầu hệ thống & Công nghệ sử dụng
+##  Yêu cầu hệ thống & Công nghệ sử dụng
 
 ### 1. Môi trường yêu cầu
 - **JDK:** Java Development Kit (**JDK 17** hoặc **JDK 21 LTS**).
@@ -257,7 +258,7 @@ classDiagram
 
 1. Mở cửa sổ dòng lệnh (Terminal / Command Prompt / PowerShell) và điều hướng vào thư mục dự án Java:
    ```bash
-   cd "c:\Users\DUONG\Downloads\HR\HRM & Task Management"
+   cd "{folder code}"
    ```
 2. Biên dịch toàn bộ mã nguồn Java sang thư mục `bin`:
    ```bash
@@ -271,7 +272,7 @@ classDiagram
 
 ---
 
-## 👥 Tác giả
+##  Tác giả
 
 Đồ án được thực hiện bởi nhóm sinh viên Khoa Công Nghệ Thông Tin dưới sự hướng dẫn khoa học của:
 * **Giảng viên hướng dẫn:** Thầy Nguyễn Minh Đạo
