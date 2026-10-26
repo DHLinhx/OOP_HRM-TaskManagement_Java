@@ -1,6 +1,6 @@
-# BẢNG ĐẶC TẢ CHI TIẾT 30 CÂU TRUY VẤN DỮ LIỆU
-## HỆ THỐNG QUẢN TRỊ NHÂN SỰ VÀ CÔNG VIỆC (HRM & TASK MANAGEMENT SYSTEM)
-### Môn học: Hệ Thống Thông Tin & Lập Trình Hướng Đối Tượng - Giảng viên: Thầy Nguyễn Minh Đạo
+# BẢNG ĐẶC TẢ 30 CÂU TRUY VẤN - PHIÊN BẢN JAVA (JDK 21 / STREAM API)
+## HỆ THỐNG QUẢN TRỊ NHÂN SỰ VÀ CÔNG VIỆC (HRM & TASK MANAGEMENT)
+### Ngôn ngữ: Java 21 | Công nghệ: Stream API & Lambdas | Kiến trúc: 3-Tier Layered
 
 ---
 
@@ -33,14 +33,7 @@
   2. *Duyệt:* Sử dụng `.forEach()` duyệt từng đối tượng `nv`.
   3. *Biến đổi:* Gọi các hàm helper: `getTenPhongBan(nv.getMaPhongBan())`, `getTenChucVu(nv.getMaChucVu())`.
   4. *Kiểm tra Null:* Kiểm tra `nv.getMaQuanLy() != null`: nếu có thì gọi `getTenNhanVien(maQL)`, ngược lại gán chuỗi `"Cấp cao nhất"`.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.forEach(Consumer<NhanVien>)`
-  * *C#:* `.ForEach(Action<NhanVien>)`, toán tử Null-conditional `maQuanLy.HasValue`
-* **Định dạng dữ liệu đầu ra:**
-  * In bảng Console gồm 6 cột: `Ma NV (8 ký tự)`, `Ho va Ten (22 ký tự)`, `Gioi Tinh (12 ký tự)`, `Phong Ban (22 ký tự)`, `Chuc Vu (28 ký tự)`, `Nguoi Quan Ly (18 ký tự)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     nhanVienDAO.getAll().forEach(nv -> {
         String pb = getTenPhongBan(nv.getMaPhongBan());
         String cv = getTenChucVu(nv.getMaChucVu());
@@ -49,8 +42,6 @@
                 nv.getMaNhanVien(), nv.HoTenNV(), nv.getGioiTinh(), pb, cv, ql);
     });
     ```
-  * *C#:*
-    ```csharp
     nhanVienDAO.GetAll().ForEach(nv => {
         string pb = getTenPhongBan(nv.getMaPhongBan());
         string cv = getTenChucVu(nv.getMaChucVu());
@@ -73,22 +64,13 @@
   1. *Nguồn:* Gọi `phongBanDAO.getAll()` để lấy danh sách phòng ban.
   2. *Xử lý trưởng phòng:* Nếu `pb.getmaTruongPhong() != null` thì tra cứu tên trưởng phòng qua `getTenNhanVien()`, ngược lại hiển thị `"Chưa có"`.
   3. *Đếm số lượng nhân viên:* Gọi `nhanVienDAO.getByPhongBan(pb.getmaPhongBan())` rồi lấy kích thước danh sách (`.size()` trong Java, `.Count` trong C#).
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `phongBanDAO.getAll().forEach(...)`, `nhanVienDAO.getByPhongBan(...).size()`
-  * *C#:* `phongBanDAO.GetAll().ForEach(...)`, `nhanVienDAO.GetByPhongBan(...).Count`
-* **Định dạng dữ liệu đầu ra:**
-  * Bảng gồm 3 cột: `Phong ban (20 ký tự)`, `Truong phong (25 ký tự)`, `So NV (10 ký tự)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     phongBanDAO.getAll().forEach(pb -> {
         String tp = pb.getmaTruongPhong() != null ? getTenNhanVien(pb.getmaTruongPhong()) : "Chưa có";
         long count = nhanVienDAO.getByPhongBan(pb.getmaPhongBan()).size();
         System.out.printf("%-20s %-25s %-10d%n", pb.gettenPhongBan(), tp, count);
     });
     ```
-  * *C#:*
-    ```csharp
     phongBanDAO.GetAll().ForEach(pb => {
         string tp = pb.getmaTruongPhong().HasValue ? getTenNhanVien(pb.getmaTruongPhong().Value) : "Chưa có";
         int count = nhanVienDAO.GetByPhongBan(pb.getmaPhongBan()).Count;
@@ -111,14 +93,7 @@
   2. Mở Stream trên toàn bộ nhân viên: `nhanVienDAO.getAll().stream()`.
   3. Lọc bằng `.filter()`: So sánh mã phòng ban (chuyển sang chuỗi bằng `equalsIgnoreCase`) HOẶC tên phòng ban chứa từ khóa (`.toLowerCase().contains()`).
   4. Gom thành danh sách bằng `.collect(Collectors.toList())`.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.stream()`, `.filter()`, `.collect(Collectors.toList())`, `.forEach()`
-  * *C#:* `.Where()`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Mã NV] | [Họ tên] | [Chức vụ] | [Phòng ban]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     List<NhanVien> ds = nhanVienDAO.getAll().stream()
         .filter(nv -> String.valueOf(nv.getMaPhongBan()).equalsIgnoreCase(keyword)
                 || getTenPhongBan(nv.getMaPhongBan()).toLowerCase().contains(keyword))
@@ -126,8 +101,6 @@
     ds.forEach(nv -> System.out.printf("- %s | %s | %s | %s%n",
         nv.getMaNhanVien(), nv.HoTenNV(), getTenChucVu(nv.getMaChucVu()), getTenPhongBan(nv.getMaPhongBan())));
     ```
-  * *C#:*
-    ```csharp
     var ds = nhanVienDAO.GetAll()
         .Where(nv => nv.getMaPhongBan().ToString().Equals(keyword, StringComparison.OrdinalIgnoreCase)
                 || getTenPhongBan(nv.getMaPhongBan()).ToLower().Contains(keyword)).ToList();
@@ -149,14 +122,7 @@
   3. Cắt lấy đúng 3 bản ghi đầu tiên: `.limit(3)`.
   4. Thu hoạch kết quả: `.collect(Collectors.toList())`.
   5. Tầng Service: Nhận danh sách và in ra console.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.sorted(Comparator.comparing(...))`, `.limit(n)`, `.collect()`
-  * *C#:* `.OrderBy(nv => nv.getNgayVaoLam())`, `.Take(n)`, `.ToList()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Mã NV] | [Họ tên] | [Ngày vào làm yyyy-MM-dd]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     // Tầng DAO:
     public List<NhanVien> getTopThamNien(int limit) {
         return DatabaseMock.dsNhanVien.stream()
@@ -168,8 +134,6 @@
     nhanVienDAO.getTopThamNien(3).forEach(nv -> 
         System.out.printf("- %s | %s | %s%n", nv.getMaNhanVien(), nv.HoTenNV(), nv.getNgayVaoLam()));
     ```
-  * *C#:*
-    ```csharp
     // Tầng DAO:
     public List<NhanVien> GetTopThamNien(int limit) =>
         DatabaseMock.dsNhanVien.OrderBy(nv => nv.getNgayVaoLam()).Take(limit).ToList();
@@ -192,20 +156,11 @@
   2. Lọc bằng `.filter()`: Điều kiện `nv.getMaQuanLy() != null && nv.getMaQuanLy() == maQL`.
   3. Thu hoạch: `.collect(Collectors.toList())`.
   4. Tầng Service: Kiểm tra nếu danh sách rỗng thì thông báo `"Khong co cap duoi nao."`; nếu có thì duyệt in Mã NV, Họ tên và Chức vụ.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter(Predicate)`, `.collect(Collectors.toList())`
-  * *C#:* `.Where(x => x.HasValue && ...)`, `.ToList()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Mã NV] | [Họ tên] | [Tên chức vụ]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     List<NhanVien> dsCapDuoi = nhanVienDAO.getCapDuoi(maNhanVienQuanLy);
     dsCapDuoi.forEach(nv -> System.out.printf("- %s | %s | %s%n",
             nv.getMaNhanVien(), nv.HoTenNV(), getTenChucVu(nv.getMaChucVu())));
     ```
-  * *C#:*
-    ```csharp
     var dsCapDuoi = nhanVienDAO.GetCapDuoi(maNhanVienQuanLy);
     dsCapDuoi.ForEach(nv => Console.WriteLine($"- {nv.getMaNhanVien()} | {nv.HoTenNV()} | {getTenChucVu(nv.getMaChucVu())}"));
     ```
@@ -225,15 +180,7 @@
   1. Tra cứu nhóm: `nhomNhanVienDAO.getById(maNhom)`. Nếu không thấy thì kết thúc.
   2. Lấy danh sách thành viên: `thanhVienNhomDAO.getByNhom(maNhom)`.
   3. Duyệt danh sách thành viên bằng `.forEach()`, với mỗi thành viên gọi `nhanVienDAO.getById()` để trích xuất Họ tên và in cùng vai trò trong dự án.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `Optional.orElse(null)`, `.forEach(Consumer)`
-  * *C#:* `FirstOrDefault()`, `.ForEach(Action)`
-* **Định dạng dữ liệu đầu ra:**
-  * Header: Mã nhóm, Tên nhóm, Trưởng nhóm, Ngày thành lập.
-  * Danh sách thành viên: `- [Mã NV] | [Họ tên] | Vai trò: [Vai trò] | Ngày tham gia: [Ngày]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     thanhVienNhomDAO.getByNhom(maNhom).forEach(tv -> {
         NhanVien nv = nhanVienDAO.getById(tv.getnhomNhanVien()).orElse(null);
         if (nv != null) {
@@ -242,8 +189,6 @@
         }
     });
     ```
-  * *C#:*
-    ```csharp
     thanhVienNhomDAO.GetByNhom(maNhom).ForEach(tv => {
         var nv = nhanVienDAO.GetById(tv.getnhomNhanVien());
         if (nv != null) {
@@ -269,14 +214,7 @@
   3. Mở Stream trên tập kết quả (`entrySet().stream()`).
   4. Lọc những người có số lượng nhóm tham gia: `.filter(entry -> entry.getValue().size() >= 2)`.
   5. Nối tên các nhóm bằng `Collectors.joining(", ")` và in ra.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `Collectors.groupingBy()`, `.filter()`, `Collectors.joining()`, `.forEach()`
-  * *C#:* `.GroupBy()`, `.Where(g => g.Count() >= 2)`, `string.Join()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Họ tên]: [Danh sách nhóm] ([Số lượng] nhóm)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     thanhVienNhomDAO.getAll().stream()
         .collect(Collectors.groupingBy(ThanhVienNhom::getnhomNhanVien))
         .entrySet().stream()
@@ -287,8 +225,6 @@
             System.out.printf("- %s: %s (%d nhóm)%n", ten, dsNhom, entry.getValue().size());
         });
     ```
-  * *C#:*
-    ```csharp
     thanhVienNhomDAO.GetAll().GroupBy(tv => tv.getnhomNhanVien())
         .Where(g => g.Count() >= 2).ToList()
         .ForEach(entry => {
@@ -312,21 +248,12 @@
   1. Duyệt qua từng chức vụ trong `chucVuDAO.getAll()`.
   2. Với mỗi chức vụ, đếm số lượng nhân viên bằng: `nhanVienDAO.getAll().stream().filter(nv -> nv.getMaChucVu() == cv.getmaChucVu()).count()`.
   3. In kết quả chức vụ và số lượng nhân sự tương ứng.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.forEach()`, `.filter()`, `.count()`
-  * *C#:* `.ForEach()`, `.Count(predicate)`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `[Tên chức vụ (30 ký tự)] Số lượng NV: [Số lượng]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chucVuDAO.getAll().forEach(cv -> {
         long count = nhanVienDAO.getAll().stream().filter(nv -> nv.getMaChucVu() == cv.getmaChucVu()).count();
         System.out.printf("%-30s Số lượng NV: %d%n", cv.gettenChucVu(), count);
     });
     ```
-  * *C#:*
-    ```csharp
     chucVuDAO.GetAll().ForEach(cv => {
         int count = nhanVienDAO.GetAll().Count(nv => nv.getMaChucVu() == cv.getmaChucVu());
         Console.WriteLine($"{cv.gettenChucVu(),-30} Số lượng NV: {count}");
@@ -348,22 +275,13 @@
   2. Lọc bằng `.filter()`: Điều kiện `thanhVienNhomDAO.getByNhanVien(nv.getMaNhanVien()).isEmpty()` (danh sách nhóm rỗng).
   3. Thu hoạch: `.collect(Collectors.toList())`.
   4. Duyệt in danh sách nhân viên chưa có nhóm.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect(Collectors.toList())`, `.forEach()`
-  * *C#:* `.Where(x => list.Count == 0)`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Mã NV] | [Họ tên] | [Tên phòng ban]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     List<NhanVien> dsChuaVaoNhom = nhanVienDAO.getAll().stream()
         .filter(nv -> thanhVienNhomDAO.getByNhanVien(nv.getMaNhanVien()).isEmpty())
         .collect(Collectors.toList());
     dsChuaVaoNhom.forEach(nv -> System.out.printf("- %s | %s | %s%n",
             nv.getMaNhanVien(), nv.HoTenNV(), getTenPhongBan(nv.getMaPhongBan())));
     ```
-  * *C#:*
-    ```csharp
     var dsChuaVaoNhom = nhanVienDAO.GetAll()
         .Where(nv => thanhVienNhomDAO.GetByNhanVien(nv.getMaNhanVien()).Count == 0).ToList();
     dsChuaVaoNhom.ForEach(nv => Console.WriteLine($"- {nv.getMaNhanVien()} | {nv.HoTenNV()} | {getTenPhongBan(nv.getMaPhongBan())}"));
@@ -384,14 +302,7 @@
   3. Tầng DAO: `DatabaseMock.dsNhanVien.stream().filter()`.
   4. Vị từ khớp: `nv.HoTenNV().toLowerCase().contains(k) || nv.getSoDienThoai().contains(k) || nv.getEmail().toLowerCase().contains(k)`.
   5. Thu hoạch và in kết quả.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect(Collectors.toList())`
-  * *C#:* `.Where()`, `.ToList()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `- [Mã NV] | [Họ tên] | [SĐT] | [Email] | [Phòng ban]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     // Tầng DAO:
     public List<NhanVien> search(String kw) {
         String k = kw.toLowerCase().trim();
@@ -405,8 +316,6 @@
     nhanVienDAO.search(keyword).forEach(nv -> System.out.printf("- %s | %s | %s | %s | %s%n",
             nv.getMaNhanVien(), nv.HoTenNV(), nv.getSoDienThoai(), nv.getEmail(), getTenPhongBan(nv.getMaPhongBan())));
     ```
-  * *C#:*
-    ```csharp
     // Tầng DAO:
     public List<NhanVien> Search(string kw) {
         string k = kw.ToLower().Trim();
@@ -439,15 +348,7 @@
   1. Tra cứu hợp đồng: `hopDongDAO.getById(maHopDong)`. Nếu không thấy, báo lỗi.
   2. Lấy danh sách điều khoản: `dieuKhoanHopDongDAO.getByHopDong(maHopDong)`.
   3. Duyệt bằng `.forEach()` để in từng điều khoản kèm số thứ tự và tiêu đề.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `Optional.orElse(null)`, `.forEach(Consumer)`
-  * *C#:* `FirstOrDefault()`, `.ForEach(Action)`
-* **Định dạng dữ liệu đầu ra:**
-  * Header: HỢP ĐỒNG SỐ: [Mã] | Nhân viên: [Họ tên] | Loại: [Loại HĐ] | Lương: [Lương] VNĐ.
-  * Các dòng điều khoản: `  Điều [Số] [[Tiêu đề]]: [Nội dung]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     HopDong hd = hopDongDAO.getById(maHopDong).orElse(null);
     if (hd != null) {
         System.out.printf("HỢP ĐỒNG SỐ: %d | Nhân viên: %s | Loại: %s | Lương: %,.0f VNĐ%n",
@@ -456,8 +357,6 @@
             System.out.printf("  Điều %d [%s]: %s%n", dk.getSoThuTu(), dk.getTieuDe(), dk.getNoiDung()));
     }
     ```
-  * *C#:*
-    ```csharp
     var hd = hopDongDAO.GetById(maHopDong);
     if (hd != null) {
         Console.WriteLine($"HỢP ĐỒNG SỐ: {hd.getMaHopDong()} | Nhân viên: {getTenNhanVien(hd.getMaNhanVien())} | Loại: {hd.getLoaiHopDong()} | Lương: {hd.getLuongThoaThuan():N0} VNĐ");
@@ -480,22 +379,13 @@
   1. Tầng DAO: `DatabaseMock.dsHopDong.stream()`.
   2. Lọc: `hd.getNgayKetThuc() != null && !hd.getNgayKetThuc().isBefore(ngayKiemTra) && !hd.getNgayKetThuc().isAfter(ngayGioiHan)`.
   3. Tầng Service: Tính khoảng cách số ngày còn lại bằng `ChronoUnit.DAYS.between()` và in bảng cảnh báo.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect(Collectors.toList())`
-  * *C#:* `.Where()`, `.ToList()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `HĐ: [Mã HĐ] NV: [Họ tên] Ngày hết hạn: [Ngày] (Còn [Số ngày] ngày)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     hopDongDAO.getSapHetHan(ngayKiemTra, 30).forEach(hd -> {
         long soNgayConLai = ChronoUnit.DAYS.between(ngayKiemTra, hd.getNgayKetThuc());
         System.out.printf("HĐ: %-6d NV: %-22s Ngày hết hạn: %s (Còn %d ngày)%n",
                 hd.getMaHopDong(), getTenNhanVien(hd.getMaNhanVien()), hd.getNgayKetThuc(), soNgayConLai);
     });
     ```
-  * *C#:*
-    ```csharp
     hopDongDAO.GetSapHetHan(ngayKiemTra, 30).ForEach(hd => {
         int soNgayConLai = hd.getNgayKetThuc().DayNumber - ngayKiemTra.DayNumber;
         Console.WriteLine($"HĐ: {hd.getMaHopDong(),-6} NV: {getTenNhanVien(hd.getMaNhanVien()),-22} Ngày hết hạn: {hd.getNgayKetThuc()} (Còn {soNgayConLai} ngày)");
@@ -515,20 +405,11 @@
   1. Tầng DAO: `chamCongDAO.getByNhanVienVaThang(maNV, thang, nam)`.
   2. Lọc Stream: Khớp `maNhanVien`, tháng (`getMonthValue()`) và năm (`getYear()`).
   3. Tầng Service: Duyệt danh sách bằng `.forEach()` và in bảng chấm công.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect(Collectors.toList())`, `.forEach()`
-  * *C#:* `.Where()`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `[Ngày] | Vào: [Giờ vào] | Ra: [Giờ ra] | Trạng thái: [Trạng thái] | OT: [Số giờ] giờ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chamCongDAO.getByNhanVienVaThang(maNV, thang, nam).forEach(cc -> 
         System.out.printf("%s | Vào: %s | Ra: %s | Trạng thái: %-18s | OT: %.1f giờ%n",
                 cc.getNgayChamCong(), cc.getGioVao(), cc.getGioRa(), cc.getTrangThaiCong(), cc.getSoGioLamThem()));
     ```
-  * *C#:*
-    ```csharp
     chamCongDAO.GetByNhanVienVaThang(maNV, thang, nam).ForEach(cc => 
         Console.WriteLine($"{cc.getNgayChamCong()} | Vào: {cc.getGioVao()} | Ra: {cc.getGioRa()} | Trạng thái: {cc.getTrangThaiCong(),-18} | OT: {cc.getSoGioLamThem():F1} giờ"));
     ```
@@ -549,14 +430,7 @@
   3. Gom nhóm và đếm: `.collect(Collectors.groupingBy(ChamCong::getMaNhanVien, Collectors.counting()))`.
   4. Mở Stream trên Map, sắp xếp giảm dần theo số lần vi phạm: `.sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))`.
   5. In danh sách xếp hạng.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `groupingBy(..., counting())`, `.sorted()`, `.forEach()`
-  * *C#:* `.Where()`, `.GroupBy()`, `.Select(g => new { ... })`, `.OrderByDescending()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Mã NV: [Mã] Họ tên: [Họ tên] Số lần đi trễ: [Số lần] lần`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chamCongDAO.getAll().stream()
         .filter(cc -> cc.getNgayChamCong().getMonthValue() == thang && cc.getNgayChamCong().getYear() == nam && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE)
         .collect(Collectors.groupingBy(ChamCong::getMaNhanVien, Collectors.counting()))
@@ -565,8 +439,6 @@
         .forEach(e -> System.out.printf("Mã NV: %-6d Họ tên: %-22s Số lần đi trễ: %d lần%n", 
                 e.getKey(), getTenNhanVien(e.getKey()), e.getValue()));
     ```
-  * *C#:*
-    ```csharp
     chamCongDAO.GetAll()
         .Where(cc => cc.getNgayChamCong().Month == thang && cc.getNgayChamCong().Year == nam && cc.getTrangThaiCong() == TrangThaiCong.DI_TRE)
         .GroupBy(cc => cc.getMaNhanVien())
@@ -590,14 +462,7 @@
   2. Gom nhóm theo nhân viên và tính tổng giờ: `.collect(Collectors.groupingBy(ChamCong::getMaNhanVien, Collectors.summingDouble(ChamCong::getSoGioLamThem)))`.
   3. Sắp xếp giảm dần theo tổng giờ OT.
   4. Duyệt in danh sách nhân viên cống hiến OT.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `groupingBy(..., summingDouble())`, `.sorted()`, `.forEach()`
-  * *C#:* `.Where()`, `.GroupBy()`, `.Select(g => new { ... })`, `.OrderByDescending()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Mã NV: [Mã] Họ tên: [Họ tên] Tổng giờ OT: [Số giờ] giờ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chamCongDAO.getAll().stream()
         .filter(cc -> cc.getNgayChamCong().getMonthValue() == thang && cc.getNgayChamCong().getYear() == nam && cc.getSoGioLamThem() > 0)
         .collect(Collectors.groupingBy(ChamCong::getMaNhanVien, Collectors.summingDouble(ChamCong::getSoGioLamThem)))
@@ -606,8 +471,6 @@
         .forEach(e -> System.out.printf("Mã NV: %-6d Họ tên: %-22s Tổng giờ OT: %.1f giờ%n", 
                 e.getKey(), getTenNhanVien(e.getKey()), e.getValue()));
     ```
-  * *C#:*
-    ```csharp
     chamCongDAO.GetAll()
         .Where(cc => cc.getNgayChamCong().Month == thang && cc.getNgayChamCong().Year == nam && cc.getSoGioLamThem() > 0)
         .GroupBy(cc => cc.getMaNhanVien())
@@ -629,20 +492,11 @@
 * **Luồng xử lý (Pipeline Logic):**
   1. Tầng DAO: `DatabaseMock.dsDonXinNghi.stream().filter(d -> d.getTrangThaiDuyet() == TrangThaiDuyet.CHO_DUYET).collect(...)`.
   2. Tầng Service: Kiểm tra rỗng, nếu có đơn thì in thông tin chi tiết từng đơn nghỉ phép.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect()`, `.forEach()`
-  * *C#:* `.Where()`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Đơn #[Mã] | NV: [Họ tên] | Loại: [Loại nghỉ] | Từ [Ngày] đến [Ngày] | Lý do: [Lý do]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     donXinNghiDAO.getChoDuyet().forEach(d -> 
         System.out.printf("Đơn #%-4d | NV: %-22s | Loại: %-18s | Từ %s đến %s | Lý do: %s%n",
                 d.getMaDon(), getTenNhanVien(d.getMaNhanVien()), d.getLoaiNghi(), d.getNgayBatDau(), d.getNgayKetThuc(), d.getLyDo()));
     ```
-  * *C#:*
-    ```csharp
     donXinNghiDAO.GetChoDuyet().ForEach(d => 
         Console.WriteLine($"Đơn #{d.getMaDon(),-4} | NV: {getTenNhanVien(d.getMaNhanVien()),-22} | Loại: {d.getLoaiNghi(),-18} | Từ {d.getNgayBatDau()} đến {d.getNgayKetThuc()} | Lý do: {d.getLyDo()}"));
     ```
@@ -660,20 +514,11 @@
   1. Gọi `donXinNghiDAO.getByNhanVien(maNhanVien)`.
   2. Lọc bằng Stream: `.filter(d -> d.getMaNhanVien() == maNhanVien)`.
   3. In lịch sử chi tiết ra console.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect()`, `.forEach()`
-  * *C#:* `.Where()`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Đơn #[Mã] | Loại: [Loại nghỉ] | Từ [Ngày] đến [Ngày] | Trạng thái: [Trạng thái]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     donXinNghiDAO.getByNhanVien(maNV).forEach(d -> 
         System.out.printf("Đơn #%-4d | Loại: %-18s | Từ %s đến %s | Trạng thái: %s%n",
                 d.getMaDon(), d.getLoaiNghi(), d.getNgayBatDau(), d.getNgayKetThuc(), d.getTrangThaiDuyet()));
     ```
-  * *C#:*
-    ```csharp
     donXinNghiDAO.GetByNhanVien(maNV).ForEach(d => 
         Console.WriteLine($"Đơn #{d.getMaDon(),-4} | Loại: {d.getLoaiNghi(),-18} | Từ {d.getNgayBatDau()} đến {d.getNgayKetThuc()} | Trạng thái: {d.getTrangThaiDuyet()}"));
     ```
@@ -693,21 +538,12 @@
      - Kiểm tra có ít nhất 1 bản ghi chấm công trong tháng (`!ds.isEmpty()`).
      - Kiểm tra không có bất kỳ bản ghi nào khác `DUNG_GIO`: `ds.stream().allMatch(c -> c.getTrangThaiCong() == TrangThaiCong.DUNG_GIO)`.
   2. Tầng Service: Lọc toàn bộ nhân viên thỏa mãn điều kiện chuyên cần và in ra.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.allMatch()`, `.forEach()`
-  * *C#:* `.Where()`, `.All()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `CHUẨN MỰC CHUYÊN CẦN: [Mã NV] [Họ tên] [Tên phòng ban]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     nhanVienDAO.getAll().stream()
         .filter(nv -> chamCongDAO.isChuyenCan100PhanTram(nv.getMaNhanVien(), thang, nam))
         .forEach(nv -> System.out.printf("CHUẨN MỰC CHUYÊN CẦN: %-6d %-22s %s%n",
                 nv.getMaNhanVien(), nv.HoTenNV(), getTenPhongBan(nv.getMaPhongBan())));
     ```
-  * *C#:*
-    ```csharp
     nhanVienDAO.GetAll()
         .Where(nv => chamCongDAO.IsChuyenCan100PhanTram(nv.getMaNhanVien(), thang, nam)).ToList()
         .ForEach(nv => Console.WriteLine($"CHUẨN MỰC CHUYÊN CẦN: {nv.getMaNhanVien(),-6} {nv.HoTenNV(),-22} {getTenPhongBan(nv.getMaPhongBan())}"));
@@ -727,21 +563,12 @@
   1. Duyệt qua từng giá trị trong Enum: `LoaiHopDong.values()`.
   2. Với mỗi loại hợp đồng, gọi DAO để đếm số bản ghi hợp đồng tương ứng: `hopDongDAO.getByLoai(loai).size()`.
   3. In bảng thống kê tỷ trọng hợp đồng.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `for-each` trên `LoaiHopDong.values()`, `.size()`
-  * *C#:* `foreach` trên `Enum.GetValues<LoaiHopDong>()`, `.Count`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Loại hợp đồng [Tên loại (25 ký tự)]: [Số lượng] người`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     for (LoaiHopDong loai : LoaiHopDong.values()) {
         long count = hopDongDAO.getByLoai(loai).size();
         System.out.printf("Loại hợp đồng %-25s: %d người%n", loai, count);
     }
     ```
-  * *C#:*
-    ```csharp
     foreach (LoaiHopDong loai in Enum.GetValues<LoaiHopDong>()) {
         int count = hopDongDAO.GetByLoai(loai).Count;
         Console.WriteLine($"Loại hợp đồng {loai,-25}: {count} người");
@@ -761,20 +588,11 @@
   1. Tầng DAO: `getByLoaiDieuKhoan(LoaiDieuKhoan.BAO_MAT, LoaiDieuKhoan.KY_LUAT)`.
   2. Lọc bằng Stream: `dk.getLoaiDieuKhoan() == loai1 || dk.getLoaiDieuKhoan() == loai2`.
   3. Tầng Service: In danh sách điều khoản pháp lý trọng yếu ra console.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.collect()`, `.forEach()`
-  * *C#:* `.Where()`, `.ToList()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `HĐ #[Mã HĐ] | Điều [Số] [[Loại]]: [Tiêu đề] | Nội dung: [Nội dung]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     dieuKhoanHopDongDAO.getByLoaiDieuKhoan(LoaiDieuKhoan.BAO_MAT, LoaiDieuKhoan.KY_LUAT).forEach(dk -> 
         System.out.printf("HĐ #%-4d | Điều %d [%-12s]: %-25s | Nội dung: %s%n",
                 dk.getMaHopDong(), dk.getSoThuTu(), dk.getLoaiDieuKhoan(), dk.getTieuDe(), dk.getNoiDung()));
     ```
-  * *C#:*
-    ```csharp
     dieuKhoanHopDongDAO.GetByLoaiDieuKhoan(LoaiDieuKhoan.BAO_MAT, LoaiDieuKhoan.KY_LUAT).ForEach(dk => 
         Console.WriteLine($"HĐ #{dk.getMaHopDong(),-4} | Điều {dk.getSoThuTu()} [{dk.getLoaiDieuKhoan(),-12}]: {dk.getTieuDe(),-25} | Nội dung: {dk.getNoiDung()}"));
     ```
@@ -798,15 +616,7 @@
   1. Tra cứu bảng lương: `bangLuongDAO.getByNhanVienVaKy(maNV, thang, nam)`.
   2. Nạp chi tiết: `chiTietBangLuongDAO.getByBangLuong(bl.getMaBangLuong())`.
   3. In tiêu đề phiếu lương và duyệt danh sách chi tiết từng khoản mục cộng/trừ.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `Optional.orElse(null)`, `.forEach(Consumer)`
-  * *C#:* `FirstOrDefault()`, `.ForEach(Action)`
-* **Định dạng dữ liệu đầu ra:**
-  * Header: PHIẾU LƯƠNG: [Họ tên] | Tháng: [Tháng/Năm] | Lương thực lãnh: [Số tiền] VNĐ.
-  * Từng dòng chi tiết: `  [[Loại]] [Tên khoản mục (25 ký tự)]: [Số tiền] VNĐ ([Ghi chú])`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     BangLuong bl = bangLuongDAO.getByNhanVienVaKy(maNV, thang, nam).orElse(null);
     if (bl != null) {
         System.out.printf("PHIẾU LƯƠNG: %s | Tháng: %d/%d | Lương thực lãnh: %,.0f VNĐ%n",
@@ -816,8 +626,6 @@
                     ct.getLoaiKhoanMuc(), ct.getTenKhoanMuc(), ct.getSoTien(), ct.getGhiChu()));
     }
     ```
-  * *C#:*
-    ```csharp
     var bl = bangLuongDAO.GetByNhanVienVaKy(maNV, thang, nam);
     if (bl != null) {
         Console.WriteLine($"PHIẾU LƯƠNG: {getTenNhanVien(bl.getMaNhanVien())} | Tháng: {thang}/{nam} | Lương thực lãnh: {bl.getLuongThucLanh():N0} VNĐ");
@@ -840,20 +648,11 @@
   2. Mở Stream, chuyển sang `DoubleStream`: `.mapToDouble(BangLuong::getLuongThucLanh)`.
   3. Tính tổng: `.sum()`.
   4. In tổng chi phí và tổng số lượng nhân viên được chi trả.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.stream()`, `.mapToDouble()`, `.sum()`
-  * *C#:* `.Sum(b => b.getLuongThucLanh())`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `TỔNG CHI PHÍ LƯƠNG THÁNG [Tháng/Năm]: [Số tiền] VNĐ ([Số NV] nhân viên)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     List<BangLuong> dsKy = bangLuongDAO.getByKy(thang, nam);
     double tongChi = dsKy.stream().mapToDouble(BangLuong::getLuongThucLanh).sum();
     System.out.printf("TỔNG CHI PHÍ LƯƠNG THÁNG %d/%d: %,.0f VNĐ (%d nhân viên)%n", thang, nam, tongChi, dsKy.size());
     ```
-  * *C#:*
-    ```csharp
     var dsKy = bangLuongDAO.GetByKy(thang, nam);
     double tongChi = dsKy.Sum(b => b.getLuongThucLanh());
     Console.WriteLine($"TỔNG CHI PHÍ LƯƠNG THÁNG {thang}/{nam}: {tongChi:N0} VNĐ ({dsKy.Count} nhân viên)");
@@ -875,14 +674,7 @@
   2. Với mỗi phòng, lọc danh sách bảng lương trong kỳ có nhân viên thuộc phòng ban đó.
   3. Tính tổng bằng `.mapToDouble(BangLuong::getLuongThucLanh).sum()`.
   4. In tên phòng ban và tổng quỹ lương tương ứng.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.forEach()`, `.filter()`, `.mapToDouble()`, `.sum()`
-  * *C#:* `.ForEach()`, `.Where()`, `.Sum()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Phòng ban [Tên phòng (22 ký tự)]: [Số tiền (15 ký tự)] VNĐ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     phongBanDAO.getAll().forEach(pb -> {
         double tongPB = bangLuongDAO.getByKy(thang, nam).stream()
             .filter(bl -> {
@@ -893,8 +685,6 @@
         System.out.printf("Phòng ban %-22s: %,15.0f VNĐ%n", pb.gettenPhongBan(), tongPB);
     });
     ```
-  * *C#:*
-    ```csharp
     phongBanDAO.GetAll().ForEach(pb => {
         double tongPB = bangLuongDAO.GetByKy(thang, nam)
             .Where(bl => {
@@ -921,21 +711,12 @@
   2. Sắp xếp giảm dần theo thu nhập: `.sorted((a, b) -> Double.compare(b.getLuongThucLanh(), a.getLuongThucLanh()))`.
   3. Cắt 3 bản ghi đầu tiên: `.limit(3)`.
   4. In danh sách Top 3 thu nhập.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.sorted()`, `.limit(3)`, `.forEach()`
-  * *C#:* `.OrderByDescending()`, `.Take(3)`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `TOP [Họ tên]: [Số tiền] VNĐ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     bangLuongDAO.getByKy(thang, nam).stream()
         .sorted((a, b) -> Double.compare(b.getLuongThucLanh(), a.getLuongThucLanh()))
         .limit(3)
         .forEach(bl -> System.out.printf("TOP %s: %,.0f VNĐ%n", getTenNhanVien(bl.getMaNhanVien()), bl.getLuongThucLanh()));
     ```
-  * *C#:*
-    ```csharp
     bangLuongDAO.GetByKy(thang, nam)
         .OrderByDescending(b => b.getLuongThucLanh())
         .Take(3).ToList()
@@ -955,21 +736,12 @@
   1. Lọc bảng chi tiết lương: `ct.getLoaiKhoanMuc() == LoaiKhoanMuc.TRU && ct.getTenKhoanMuc().toUpperCase().contains("BH")`.
   2. Gom nhóm theo tên khoản mục bảo hiểm: `Collectors.groupingBy(ChiTietBangLuong::getTenKhoanMuc, Collectors.summingDouble(ChiTietBangLuong::getSoTien))`.
   3. In bảng kê tổng số tiền trích nộp bảo hiểm.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `groupingBy(..., summingDouble())`, `.forEach()`
-  * *C#:* `.Where()`, `.GroupBy()`, `.Select()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `[Tên khoản bảo hiểm (30 ký tự)]: [Số tiền] VNĐ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chiTietBangLuongDAO.getAll().stream()
         .filter(ct -> ct.getLoaiKhoanMuc() == LoaiKhoanMuc.TRU && ct.getTenKhoanMuc().toUpperCase().contains("BH"))
         .collect(Collectors.groupingBy(ChiTietBangLuong::getTenKhoanMuc, Collectors.summingDouble(ChiTietBangLuong::getSoTien)))
         .forEach((ten, tong) -> System.out.printf("%-30s: %,.0f VNĐ%n", ten, tong));
     ```
-  * *C#:*
-    ```csharp
     chiTietBangLuongDAO.GetAll()
         .Where(ct => ct.getLoaiKhoanMuc() == LoaiKhoanMuc.TRU && ct.getTenKhoanMuc().ToUpper().Contains("BH"))
         .GroupBy(ct => ct.getTenKhoanMuc())
@@ -989,21 +761,12 @@
   1. Lọc: `ct.getLoaiKhoanMuc() == LoaiKhoanMuc.CONG && !ct.getTenKhoanMuc().contains("Lương cơ bản")`.
   2. Gom nhóm theo tên khoản phụ cấp/thưởng và tính tổng số tiền đã chi trả.
   3. In danh mục báo cáo.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `groupingBy(..., summingDouble())`, `.forEach()`
-  * *C#:* `.Where()`, `.GroupBy()`, `.Select()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Khoản chi [Tên khoản (25 ký tự)]: [Số tiền] VNĐ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chiTietBangLuongDAO.getAll().stream()
         .filter(ct -> ct.getLoaiKhoanMuc() == LoaiKhoanMuc.CONG && !ct.getTenKhoanMuc().contains("Lương cơ bản"))
         .collect(Collectors.groupingBy(ChiTietBangLuong::getTenKhoanMuc, Collectors.summingDouble(ChiTietBangLuong::getSoTien)))
         .forEach((ten, tong) -> System.out.printf("Khoản chi %-25s: %,.0f VNĐ%n", ten, tong));
     ```
-  * *C#:*
-    ```csharp
     chiTietBangLuongDAO.GetAll()
         .Where(ct => ct.getLoaiKhoanMuc() == LoaiKhoanMuc.CONG && !ct.getTenKhoanMuc().Contains("Lương cơ bản"))
         .GroupBy(ct => ct.getTenKhoanMuc())
@@ -1024,15 +787,7 @@
   1. Tra cứu phiếu đánh giá: `danhGiaHieuSuatDAO.getById(maDanhGia)`.
   2. Nạp chi tiết: `chiTietDanhGiaDAO.getByDanhGia(maDanhGia)`.
   3. In tiêu đề phiếu KPI và duyệt in từng tiêu chí kèm tỷ lệ trọng số (%).
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `Optional.orElse(null)`, `.forEach(Consumer)`
-  * *C#:* `FirstOrDefault()`, `.ForEach(Action)`
-* **Định dạng dữ liệu đầu ra:**
-  * Header: PHIẾU ĐÁNH GIÁ: [Họ tên] | Điểm: [Điểm] | Xếp loại: [Xếp loại].
-  * Dòng tiêu chí: `  - [Tên tiêu chí (25 ký tự)]: Điểm [Điểm] (Trọng số [%]%)`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     DanhGiaHieuSuat dg = danhGiaHieuSuatDAO.getById(maDanhGia).orElse(null);
     if (dg != null) {
         System.out.printf("PHIẾU ĐÁNH GIÁ: %s | Điểm: %.2f | Xếp loại: %s%n",
@@ -1042,8 +797,6 @@
                     ct.getTenTieuChi(), ct.getDiemSo(), ct.getTrongSo() * 100));
     }
     ```
-  * *C#:*
-    ```csharp
     var dg = danhGiaHieuSuatDAO.GetById(maDanhGia);
     if (dg != null) {
         Console.WriteLine($"PHIẾU ĐÁNH GIÁ: {getTenNhanVien(dg.getMaNhanVien())} | Điểm: {dg.getDiemTrungBinh():F2} | Xếp loại: {dg.getXepLoai()}");
@@ -1066,15 +819,7 @@
   1. Lấy danh sách đánh giá trong năm: `danhGiaHieuSuatDAO.getByNam(nam)`.
   2. Gom nhóm theo xếp loại: `.collect(Collectors.groupingBy(DanhGiaHieuSuat::getXepLoai))`.
   3. Duyệt từng nhóm xếp loại và in danh sách nhân viên trực thuộc nhóm đó.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `groupingBy(DanhGiaHieuSuat::getXepLoai)`, `.forEach()`
-  * *C#:* `.GroupBy(d => d.getXepLoai())`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Tiêu đề nhóm: `=== XẾP LOẠI [Tên loại] ([Số người] người) ===`.
-  * Dòng nhân viên: `  - [Họ tên (22 ký tự)]: Điểm [Điểm]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     danhGiaHieuSuatDAO.getByNam(nam).stream()
         .collect(Collectors.groupingBy(DanhGiaHieuSuat::getXepLoai))
         .forEach((xl, ds) -> {
@@ -1082,8 +827,6 @@
             ds.forEach(d -> System.out.printf("  - %-22s: Điểm %.2f%n", getTenNhanVien(d.getMaNhanVien()), d.getDiemTrungBinh()));
         });
     ```
-  * *C#:*
-    ```csharp
     danhGiaHieuSuatDAO.GetByNam(nam).GroupBy(d => d.getXepLoai()).ToList()
         .ForEach(g => {
             Console.WriteLine($"=== XẾP LOẠI {g.Key} ({g.Count()} người) ===");
@@ -1106,22 +849,13 @@
   2. Lọc 1: `d.getXepLoai() == XepLoai.XUAT_SAC`.
   3. Lọc 2: Kiểm tra danh sách đơn nghỉ phép của nhân viên phải rỗng: `donXinNghiDAO.getByNhanVien(d.getMaNhanVien()).isEmpty()`.
   4. In danh sách gương mặt xuất sắc toàn diện.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.filter()`, `.filter()`, `.forEach()`
-  * *C#:* `.Where()`, `.Where()`, `.ForEach()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `XUẤT SẮC TOÀN DIỆN: [Họ tên] | Điểm KPI: [Điểm]`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     danhGiaHieuSuatDAO.getByNam(nam).stream()
         .filter(d -> d.getXepLoai() == XepLoai.XUAT_SAC)
         .filter(d -> donXinNghiDAO.getByNhanVien(d.getMaNhanVien()).isEmpty())
         .forEach(d -> System.out.printf("XUẤT SẮC TOÀN DIỆN: %s | Điểm KPI: %.2f%n", 
                 getTenNhanVien(d.getMaNhanVien()), d.getDiemTrungBinh()));
     ```
-  * *C#:*
-    ```csharp
     danhGiaHieuSuatDAO.GetByNam(nam)
         .Where(d => d.getXepLoai() == XepLoai.XUAT_SAC)
         .Where(d => donXinNghiDAO.GetByNhanVien(d.getMaNhanVien()).Count == 0).ToList()
@@ -1144,14 +878,7 @@
   2. Lọc bảng lương của các nhân viên giữ chức vụ đó.
   3. Tính trung bình bằng `.mapToDouble(BangLuong::getLuongThucLanh).average().orElse(0)`.
   4. In chức vụ và thu nhập trung bình.
-* **Toán tử Stream / LINQ áp dụng:**
-  * *Java:* `.forEach()`, `.filter()`, `.mapToDouble()`, `.average()`, `.orElse(0)`
-  * *C#:* `.ForEach()`, `.Where()`, `.Average()`
-* **Định dạng dữ liệu đầu ra:**
-  * Dòng in: `Chức vụ [Tên chức vụ (28 ký tự)]: Lương TB [Số tiền (12 ký tự)] VNĐ`.
-* **Mã nguồn đối chiếu:**
-  * *Java:*
-    ```java
+* **Toán tử Java Stream API áp dụng:**
     chucVuDAO.getAll().forEach(cv -> {
         double tb = bangLuongDAO.getAll().stream()
             .filter(bl -> {
@@ -1162,8 +889,6 @@
         System.out.printf("Chức vụ %-28s: Lương TB %,12.0f VNĐ%n", cv.gettenChucVu(), tb);
     });
     ```
-  * *C#:*
-    ```csharp
     chucVuDAO.GetAll().ForEach(cv => {
         var dsLg = bangLuongDAO.GetAll().Where(bl => {
             var nv = nhanVienDAO.GetById(bl.getMaNhanVien());
