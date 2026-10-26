@@ -70,7 +70,7 @@ Hệ thống cung cấp đầy đủ 30 chức năng nghiệp vụ được phâ
 
 ---
 
-## 💡 Áp dụng lập trình hướng đối tượng (OOP)
+## Áp dụng lập trình hướng đối tượng (OOP)
 
 Ứng dụng Java tuân thủ nghiêm ngặt 4 nguyên lý OOP và các mẫu thiết kế kiến trúc chuẩn mực:
 
