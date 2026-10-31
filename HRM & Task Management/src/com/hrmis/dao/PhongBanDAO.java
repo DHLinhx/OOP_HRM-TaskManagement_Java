@@ -6,7 +6,7 @@ import com.hrmis.models.PhongBan;
 import java.util.List;
 import java.util.Optional;
 
-public class PhongBanDAO implements IDAO<PhongBan, Integer> {
+public class PhongBanDAO implements IDAO<PhongBan, Integer> { 
 
     @Override
     public List<PhongBan> getAll() {

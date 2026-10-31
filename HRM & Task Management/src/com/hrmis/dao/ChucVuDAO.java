@@ -6,7 +6,7 @@ import com.hrmis.models.ChucVu;
 import java.util.List;
 import java.util.Optional;
 
-public class ChucVuDAO implements IDAO<ChucVu, Integer> {
+public class ChucVuDAO implements IDAO<ChucVu, Integer> { 
 
     @Override
     public List<ChucVu> getAll() {

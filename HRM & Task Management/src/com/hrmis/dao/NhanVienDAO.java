@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class NhanVienDAO implements IDAO<NhanVien, Integer> {
+public class NhanVienDAO implements IDAO<NhanVien, Integer> { 
 
     @Override
     public List<NhanVien> getAll() {

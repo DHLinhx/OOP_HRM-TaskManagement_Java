@@ -5,9 +5,9 @@ import com.hrmis.models.ThanhVienNhom;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Collectors; 
 
-public class ThanhVienNhomDAO implements IDAO<ThanhVienNhom, String> {
+public class ThanhVienNhomDAO implements IDAO<ThanhVienNhom, String> { 
 
     @Override
     public List<ThanhVienNhom> getAll() {
