@@ -42,7 +42,7 @@ public class Main {
     }
 
     private static int promptInt(Scanner scanner, String message, int defaultValue) {
-        System.out.printf("👉 %s [Mặc định: %d]: ", message, defaultValue);
+        System.out.printf(" %s [Mặc định: %d]: ", message, defaultValue);
         String line = scanner.nextLine().trim();
         if (line.isEmpty()) {
             return defaultValue;
@@ -56,13 +56,13 @@ public class Main {
     }
 
     private static String promptString(Scanner scanner, String message, String defaultValue) {
-        System.out.printf("👉 %s [Mặc định: \"%s\"]: ", message, defaultValue);
+        System.out.printf(" %s [Mặc định: \"%s\"]: ", message, defaultValue);
         String line = scanner.nextLine().trim();
         return line.isEmpty() ? defaultValue : line;
     }
 
     private static void executeChoice(int choice, Scanner scanner) {
-        System.out.println("\n=== ĐANG THỰC THI: CÂU " + choice + " ===");
+        System.out.println("\n=== === CÂU " + choice + "=== ===");
 
         switch (choice) {
             // LĨNH (Câu 1 -> 10: Quản lý nhân sự, tổ chức phòng ban)
