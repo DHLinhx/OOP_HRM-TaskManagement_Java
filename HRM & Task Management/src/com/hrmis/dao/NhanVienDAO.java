@@ -63,12 +63,10 @@ public class NhanVienDAO implements IDAO<NhanVien, Integer> {
 
     @Override
     public void update(NhanVien entity) {
-        for (int i = 0; i < DatabaseMock.dsNhanVien.size(); i++) {
-            if (DatabaseMock.dsNhanVien.get(i).getMaNhanVien() == entity.getMaNhanVien()) {
-                DatabaseMock.dsNhanVien.set(i, entity);
-                return;
-            }
-        }
+        java.util.stream.IntStream.range(0, DatabaseMock.dsNhanVien.size())
+            .filter(i -> DatabaseMock.dsNhanVien.get(i).getMaNhanVien() == entity.getMaNhanVien())
+            .findFirst()
+            .ifPresent(i -> DatabaseMock.dsNhanVien.set(i, entity));
     }
 
     @Override
